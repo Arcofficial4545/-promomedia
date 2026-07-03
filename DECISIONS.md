@@ -91,3 +91,20 @@ Running log of senior-level decisions made during the build. Newest last.
   requires bundling a font file; revisit in Phase 9 if worth it.
 - **/search is `robots: noindex`** (thin/duplicate content) but present in
   the WebSite SearchAction JSON-LD.
+
+## Phase 5 — Hero + home
+
+- **Hero search is a plain GET form** (`action="/search"`) — zero JS for the
+  primary CTA; works before hydration.
+- **Canvas grid** pauses via IntersectionObserver when scrolled past, caps
+  DPR at 2, and lerps parallax offsets — all rAF, transform/paint only.
+- **Ticker + trust strip are CSS marquees** (translateX keyframes, paused on
+  hover, disabled under reduced motion) instead of JS marquees.
+- **Floating tickets are decorative** (`aria-hidden`, non-interactive) —
+  real deals live below the fold; keeps the hero light and honest for AT.
+- **Lenis ↔ ScrollTrigger sync** happens inside the hero's `useGSAP`
+  (`lenis.on("scroll", ScrollTrigger.update)`) so GSAP stays out of the
+  shared client bundle for non-home pages.
+- React Compiler lint enforced two patterns worth keeping: no `Date.now()`
+  in render (moved to module-level helpers / lazy state), no synchronous
+  `setState` in effects (reduced-motion values render directly).

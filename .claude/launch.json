@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "promopedia-dev",
+      "name": "promopedia-prod",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "3210"],
+      "runtimeArgs": ["run", "start", "--", "--port", "3210"],
       "port": 3210
     }
   ]

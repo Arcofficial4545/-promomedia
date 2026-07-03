@@ -17,7 +17,12 @@
   posts), coupons feed, categories index + detail, global search, about /
   contact (working form + `contact_messages` table) / disclosure / privacy /
   terms, JSON-LD, dynamic OG images, sitemap + robots. All routes 200.
-- [ ] **Phase 5 — Hero + home + motion polish.**
+- [x] **Phase 5 — Hero + home + motion polish.** "The Deal Grid" hero:
+  canvas grid (idle drift + mouse parallax, paused offscreen), kinetic masked
+  headline (GSAP), command search, 4 floating tickets (idle float + parallax
+  + scroll rotate-out), live ticker marquee, count-up stats; full home:
+  trust strip, featured deals, categories, trending stores, blog teasers,
+  newsletter band. Reduced-motion fallbacks throughout. Verified in browser.
 - [ ] **Phase 6 — Blog.** Tiptap renderer, index, article, RSS.
 - [ ] **Phase 7 — Promotional units + newsletter.**
 - [ ] **Phase 8 — Admin portal.**
