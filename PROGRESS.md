@@ -4,8 +4,10 @@
   tokens, fonts (Space Grotesk / Inter / JetBrains Mono), primitives (Button,
   Card, Input, Badge, Container, Section), header/footer shell, Lenis smooth
   scroll + reduced-motion hook, placeholder home. Build verified.
-- [ ] **Phase 2 — Data layer.** Drizzle schema + migrations (local SQLite),
-  repositories, adapters (auth/storage), seed script, `DATA_LAYER.md`.
+- [x] **Phase 2 — Data layer.** Drizzle schema + migrations (local SQLite,
+  12 tables), typed repositories, auth/storage adapters, seed script (16
+  stores, 52 coupons, 6 posts, 6 promos, admin user), `DATA_LAYER.md`.
+  Build verified.
 - [ ] **Phase 3 — Coupon Ticket + reveal + `/go/[couponId]` redirect.**
 - [ ] **Phase 4 — Public content pages.** Stores, coupons, categories, search,
   ISR, JSON-LD, OG images.
