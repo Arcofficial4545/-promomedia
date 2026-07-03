@@ -357,6 +357,19 @@ export const settings = sqliteTable("settings", {
   updatedAt: updatedAt(),
 });
 
+export const contactMessages = sqliteTable(
+  "contact_messages",
+  {
+    id: id(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    message: text("message").notNull(),
+    isRead: bool("is_read"),
+    createdAt: createdAt(),
+  },
+  (t) => [index("contact_messages_created_idx").on(t.createdAt)],
+);
+
 export const adminUsers = sqliteTable(
   "admin_users",
   {
@@ -456,3 +469,4 @@ export type NewClick = typeof clicks.$inferInsert;
 export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
 export type Settings = typeof settings.$inferSelect;
 export type AdminUser = typeof adminUsers.$inferSelect;
+export type ContactMessage = typeof contactMessages.$inferSelect;

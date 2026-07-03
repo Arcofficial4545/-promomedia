@@ -60,3 +60,34 @@ Running log of senior-level decisions made during the build. Newest last.
   `timestamptz` in Postgres later.
 - **Seed is destructive** (wipe + insert) — it's a dev tool; documented in
   DATA_LAYER.md. Prints admin credentials once; `.env.local` pins them.
+
+## Phase 3 — Coupon Ticket + redirect
+
+- **Ticket notches** use CSS `mask` with hard-stop radial cutouts — the
+  spec-sanctioned technique (masks/radial cutouts); no visible color
+  gradients anywhere.
+- **Reveal flow:** the "Get Code" control is a real `<a href="/go/…"
+  target="_blank" rel="sponsored noopener">` so link semantics/SEO hygiene
+  are correct; the click handler reveals + copies + toasts and lets default
+  navigation open the store tab. Codes are masked visually (first 2 + last 2
+  chars) rather than withheld from the DOM — withholding buys nothing since
+  the reveal must work offline-fast, and the code is public anyway.
+- **Expiry is computed against a per-mount timestamp** (lazy `useState`
+  initializer) because the React Compiler purity lint forbids `Date.now()` in
+  render.
+- **`/go` logging is fire-and-forget** (`void Promise.allSettled`) so the 302
+  is never blocked by analytics writes; the route validates UUID form,
+  rate-limits per IP (30/min), and only redirects to http(s) destinations.
+
+## Phase 4 — Public pages
+
+- **Added a `contact_messages` table** (migration 0001) — section 7.11
+  requires storing contact submissions but section 6 omitted a table.
+- **Filtering is URL-driven** (`?q=&category=&sort=&page=`): the FilterBar
+  client component just rewrites searchParams (debounced), the server
+  re-renders. Shareable/crawlable result URLs, no client data fetching.
+- **OG images** use the default sans font in `ImageResponse` — brand comes
+  from the pine/emerald layout. Loading Space Grotesk into the OG renderer
+  requires bundling a font file; revisit in Phase 9 if worth it.
+- **/search is `robots: noindex`** (thin/duplicate content) but present in
+  the WebSite SearchAction JSON-LD.

@@ -12,8 +12,11 @@
   with reveal/copy/toast, terms accordion, expiry states; `/go/[couponId]`
   route with rate limiting, hashed-UA click logging, counter increment.
   Verified end-to-end (302 to store, click rows written).
-- [ ] **Phase 4 — Public content pages.** Stores, coupons, categories, search,
-  ISR, JSON-LD, OG images.
+- [x] **Phase 4 — Public content pages.** Stores directory (search, category
+  filter, sort, pagination) + profile (coupons, sidebar best-deal, related
+  posts), coupons feed, categories index + detail, global search, about /
+  contact (working form + `contact_messages` table) / disclosure / privacy /
+  terms, JSON-LD, dynamic OG images, sitemap + robots. All routes 200.
 - [ ] **Phase 5 — Hero + home + motion polish.**
 - [ ] **Phase 6 — Blog.** Tiptap renderer, index, article, RSS.
 - [ ] **Phase 7 — Promotional units + newsletter.**
