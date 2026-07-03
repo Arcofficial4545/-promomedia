@@ -8,7 +8,10 @@
   12 tables), typed repositories, auth/storage adapters, seed script (16
   stores, 52 coupons, 6 posts, 6 promos, admin user), `DATA_LAYER.md`.
   Build verified.
-- [ ] **Phase 3 — Coupon Ticket + reveal + `/go/[couponId]` redirect.**
+- [x] **Phase 3 — Coupon Ticket + reveal + redirect.** Mask-notched ticket
+  with reveal/copy/toast, terms accordion, expiry states; `/go/[couponId]`
+  route with rate limiting, hashed-UA click logging, counter increment.
+  Verified end-to-end (302 to store, click rows written).
 - [ ] **Phase 4 — Public content pages.** Stores, coupons, categories, search,
   ISR, JSON-LD, OG images.
 - [ ] **Phase 5 — Hero + home + motion polish.**

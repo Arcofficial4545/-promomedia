@@ -19,7 +19,7 @@ function resolveDbPath(): string {
   const filePath = url.startsWith("file:") ? url.slice(5) : url;
   const absolute = path.isAbsolute(filePath)
     ? filePath
-    : path.join(process.cwd(), filePath);
+    : path.join(/*turbopackIgnore: true*/ process.cwd(), filePath);
   fs.mkdirSync(path.dirname(absolute), { recursive: true });
   return absolute;
 }

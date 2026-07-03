@@ -286,6 +286,42 @@
   }
 }
 
+/* ---------------------------------------------------- Coupon Ticket shape */
+@layer components {
+  /*
+   * Voucher silhouette: two circular notch cutouts where the stub meets the
+   * main body, done with CSS masks (hard-stop radials = cutouts, not visible
+   * gradients). --ticket-stub is the stub width measured from the right edge.
+   */
+  .ticket-shape {
+    --ticket-stub: 11rem;
+    --ticket-notch: 11px;
+    mask:
+      radial-gradient(
+        circle var(--ticket-notch) at calc(100% - var(--ticket-stub)) 0,
+        transparent 98%,
+        black 100%
+      ),
+      radial-gradient(
+        circle var(--ticket-notch) at calc(100% - var(--ticket-stub)) 100%,
+        transparent 98%,
+        black 100%
+      );
+    mask-composite: intersect;
+  }
+
+  @media (max-width: 40rem) {
+    .ticket-shape {
+      --ticket-stub: 8.25rem;
+    }
+  }
+
+  /* Perforated divider between body and stub */
+  .ticket-perforation {
+    border-left: 2px dashed var(--color-line-strong);
+  }
+}
+
 /* -------------------------------------------------------- Utility layer */
 @layer utilities {
   .font-display {
