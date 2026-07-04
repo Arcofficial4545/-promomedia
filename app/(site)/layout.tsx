@@ -2,12 +2,21 @@ import { Toaster } from "sonner";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
+import { PopupManager } from "@/components/promo/PopupManager";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { getSettings } from "@/lib/db/repositories/settings";
+import { resolvePopupPromo } from "@/lib/promos/resolve";
 import { organizationLd, websiteLd } from "@/lib/seo/jsonld";
 
-export default function SiteLayout({
+export default async function SiteLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const [settings, timedPromo, exitPromo] = await Promise.all([
+    getSettings(),
+    resolvePopupPromo("popup-timed"),
+    resolvePopupPromo("popup-exit"),
+  ]);
+
   return (
     <SmoothScroll>
       <JsonLd data={[organizationLd(), websiteLd()]} />
@@ -22,6 +31,11 @@ export default function SiteLayout({
         {children}
       </main>
       <Footer />
+      <PopupManager
+        timedPromo={timedPromo}
+        exitPromo={exitPromo}
+        rules={settings.popupRules}
+      />
       <Toaster
         position="bottom-center"
         toastOptions={{

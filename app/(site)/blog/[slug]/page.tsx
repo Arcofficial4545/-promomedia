@@ -15,6 +15,7 @@ import {
   type TiptapNode,
 } from "@/components/blog/tiptap";
 import { CouponGrid } from "@/components/coupon/CouponGrid";
+import { PromoSlot } from "@/components/promo/PromoSlot";
 import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
@@ -166,7 +167,16 @@ export default async function ArticlePage({
             </div>
 
             <article className="mx-auto w-full max-w-2xl min-w-0">
-              <ArticleRenderer doc={doc} coupons={couponMap} />
+              <ArticleRenderer
+                doc={doc}
+                coupons={couponMap}
+                promoSlot={
+                  <PromoSlot
+                    placement="in-content"
+                    path={`/blog/${post.slug}`}
+                  />
+                }
+              />
 
               {post.tags.length > 0 && (
                 <div className="mt-10 flex flex-wrap gap-2 border-t border-line pt-6">
@@ -208,7 +218,10 @@ export default async function ArticlePage({
             <div className="hidden lg:block">
               <div className="sticky top-24 space-y-8">
                 <Toc entries={headings} />
-                {/* TODO(phase-7): <PromoSlot placement="sticky-rail" /> */}
+                <PromoSlot
+                  placement="sticky-rail"
+                  path={`/blog/${post.slug}`}
+                />
               </div>
             </div>
           </div>

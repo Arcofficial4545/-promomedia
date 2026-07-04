@@ -12,6 +12,7 @@ import { NewsletterForm } from "@/components/marketing/NewsletterForm";
 import { StoreCard } from "@/components/marketing/StoreCard";
 import { TrustStrip } from "@/components/marketing/TrustStrip";
 import { Reveal } from "@/components/motion/Reveal";
+import { PromoSlot } from "@/components/promo/PromoSlot";
 import { listCategories } from "@/lib/db/repositories/categories";
 import {
   countActiveCoupons,
@@ -77,6 +78,11 @@ export default async function HomePage() {
       />
 
       <TrustStrip brandNames={featuredStores.map((s) => s.name)} />
+
+      {/* --------------------------------------------------- Home banner */}
+      <Container size="wide" className="mt-10">
+        <PromoSlot placement="home-banner" path="/" />
+      </Container>
 
       {/* ------------------------------------------------ Featured deals */}
       <Section>

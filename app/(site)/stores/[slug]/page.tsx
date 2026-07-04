@@ -10,6 +10,7 @@ import { CouponGrid } from "@/components/coupon/CouponGrid";
 import { CouponTicket } from "@/components/coupon/CouponTicket";
 import { StoreLogo } from "@/components/coupon/StoreLogo";
 import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
+import { PromoSlot } from "@/components/promo/PromoSlot";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { listCouponsForStore } from "@/lib/db/repositories/coupons";
 import { listPostsForStore } from "@/lib/db/repositories/posts";
@@ -208,7 +209,7 @@ export default async function StorePage({
                   </a>
                 </Card>
               )}
-              {/* TODO(phase-7): <PromoSlot placement="sidebar" /> */}
+              <PromoSlot placement="sidebar" path={`/stores/${store.slug}`} />
             </aside>
           </div>
 

@@ -42,6 +42,22 @@ export async function getActivePromoForPlacement(
   return rows.find((p) => matchesPath(p, path)) ?? null;
 }
 
+/**
+ * Highest-priority live promo for a placement, ignoring path rules — used
+ * for popups, where the client evaluates path targeting on navigation.
+ */
+export async function getTopActivePromo(
+  placement: PromoPlacement,
+): Promise<Promo | null> {
+  const rows = await db
+    .select()
+    .from(promos)
+    .where(and(eq(promos.placement, placement), isLiveNow()))
+    .orderBy(desc(promos.priority), desc(promos.updatedAt))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
 /* ------------------------------- Admin ------------------------------- */
 
 export async function adminListPromos(): Promise<Promo[]> {

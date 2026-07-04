@@ -201,11 +201,35 @@ type ArticleRendererProps = {
   promoSlot?: React.ReactNode;
 };
 
-/** Renders Tiptap JSON to styled React, including live coupon embeds. */
+/** Blocks to render before an auto-injected in-content promo. */
+const AUTO_INJECT_AFTER_BLOCKS = 5;
+
+function hasPromoSlot(node: TiptapNode): boolean {
+  if (node.type === "promoSlot") return true;
+  return (node.content ?? []).some(hasPromoSlot);
+}
+
+/**
+ * Renders Tiptap JSON to styled React, including live coupon embeds.
+ * If the document has no explicit promoSlot node, the in-content promo is
+ * auto-injected after the first few blocks.
+ */
 export function ArticleRenderer({ doc, coupons, promoSlot }: ArticleRendererProps) {
+  let renderedDoc = doc;
+  if (promoSlot && !hasPromoSlot(doc) && (doc.content?.length ?? 0) > AUTO_INJECT_AFTER_BLOCKS + 1) {
+    renderedDoc = {
+      ...doc,
+      content: [
+        ...doc.content!.slice(0, AUTO_INJECT_AFTER_BLOCKS),
+        { type: "promoSlot" },
+        ...doc.content!.slice(AUTO_INJECT_AFTER_BLOCKS),
+      ],
+    };
+  }
+
   return (
     <div className="text-body-lg">
-      <RenderNode node={doc} ctx={{ coupons, promoSlot }} index={0} />
+      <RenderNode node={renderedDoc} ctx={{ coupons, promoSlot }} index={0} />
     </div>
   );
 }

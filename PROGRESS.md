@@ -28,6 +28,11 @@
   grid + filters), article page (TOC scroll-spy, progress bar, share rail,
   related deals, author bio, view ping, Article JSON-LD), blog category
   pages, RSS feed. Embedded tickets verified rendering.
-- [ ] **Phase 7 — Promotional units + newsletter.**
+- [x] **Phase 7 — Promotional units + newsletter.** Data-driven `PromoSlot`
+  (sidebar on store pages, sticky-rail + in-content on articles with
+  auto-injection after 5 blocks, home banner), PopupManager (timed + desktop
+  exit-intent, first-party-cookie frequency caps + global cooldown, no
+  stacking, Esc/backdrop close, focus trap + restore, reduced-motion
+  entrance), `/go?promo=` attribution, newsletter action live on all forms.
 - [ ] **Phase 8 — Admin portal.**
 - [ ] **Phase 9 — Hardening.** A11y, perf, SEO, security, QA.

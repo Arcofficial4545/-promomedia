@@ -59,11 +59,16 @@ export async function GET(
     // ignore malformed referers
   }
 
+  // Optional promo attribution: /go/[couponId]?promo=<promoId>
+  const promoParam = request.nextUrl.searchParams.get("promo");
+  const promoId = promoParam && UUID_RE.test(promoParam) ? promoParam : null;
+
   // Fire-and-forget: never make the visitor wait on analytics writes.
   void Promise.allSettled([
     logClick({
       couponId: coupon.id,
       storeId: coupon.store.id,
+      promoId,
       path,
       referer: referer ? referer.slice(0, 500) : null,
       userAgentHash: hashUserAgent(request.headers.get("user-agent")),
