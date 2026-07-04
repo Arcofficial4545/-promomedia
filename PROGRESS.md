@@ -23,7 +23,11 @@
   + scroll rotate-out), live ticker marquee, count-up stats; full home:
   trust strip, featured deals, categories, trending stores, blog teasers,
   newsletter band. Reduced-motion fallbacks throughout. Verified in browser.
-- [ ] **Phase 6 — Blog.** Tiptap renderer, index, article, RSS.
+- [x] **Phase 6 — Blog.** Tiptap→React renderer (headings/lists/quotes/code/
+  images/links + live couponEmbed + promoSlot hook), blog index (featured +
+  grid + filters), article page (TOC scroll-spy, progress bar, share rail,
+  related deals, author bio, view ping, Article JSON-LD), blog category
+  pages, RSS feed. Embedded tickets verified rendering.
 - [ ] **Phase 7 — Promotional units + newsletter.**
 - [ ] **Phase 8 — Admin portal.**
 - [ ] **Phase 9 — Hardening.** A11y, perf, SEO, security, QA.
