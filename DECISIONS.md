@@ -108,3 +108,26 @@ Running log of senior-level decisions made during the build. Newest last.
 - React Compiler lint enforced two patterns worth keeping: no `Date.now()`
   in render (moved to module-level helpers / lazy state), no synchronous
   `setState` in effects (reduced-motion values render directly).
+
+## Phase 8 — Admin portal
+
+- **Route-group split:** `/admin/login` sits outside the gated
+  `(panel)` route group so the auth-checking layout never wraps the login
+  page; `proxy.ts` is the outer wall, `requireAdmin()` in the panel layout
+  (and every server action) is the inner wall.
+- **Forms:** React Hook Form manages client state; the server action is the
+  single source of validation truth (shared Zod schemas in
+  `lib/validators/admin.ts`, input coercion via `z.coerce`). Client-side
+  zodResolver was skipped for admin forms — server errors surface via toast,
+  which keeps ~6 forms materially simpler with no double-schema typing.
+- **React Compiler warnings** for `useReactTable`/`watch()` are expected:
+  the compiler skips those components (documented incompatible libraries);
+  behavior is unaffected.
+- **`revalidatePath("/", "layout")`** after content mutations — content
+  (stores/coupons/posts/promos) surfaces on many public routes, so a broad
+  revalidation beats maintaining a per-entity path list at this scale.
+- **CSV exports are route handlers** (not actions) so they can stream a
+  download; both check the session and return 401 without it (proxy also
+  gates them).
+- **Delete UX:** inline two-step confirm (`DeleteButton`) instead of a modal
+  — fewer moving parts, keyboard-friendly, same safety.

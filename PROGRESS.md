@@ -34,5 +34,15 @@
   exit-intent, first-party-cookie frequency caps + global cooldown, no
   stacking, Esc/backdrop close, focus trap + restore, reduced-motion
   entrance), `/go?promo=` attribution, newsletter action live on all forms.
-- [ ] **Phase 8 — Admin portal.**
+- [x] **Phase 8 — Admin portal.** `proxy.ts` session gate + server-side
+  re-check (`requireAdmin`), login (rate-limited, scrypt + signed cookie),
+  dashboard (KPIs, Recharts clicks chart, top coupons/stores, recent
+  clicks), full CRUD for stores/coupons/categories/posts/promos (RHF forms,
+  server actions with shared Zod validation, TanStack table with bulk
+  activate/deactivate), Tiptap editor with Insert Coupon + Promo Slot nodes
+  and live reading-time calc, promo manager with live placement preview,
+  media library (upload/copy/delete via storage adapter), newsletter +
+  analytics CSV exports, contact messages inbox, settings. Verified in
+  browser: login flow, dashboard data, all pages 200, settings mutation
+  round-trip, media upload/delete, editor coupon chips.
 - [ ] **Phase 9 — Hardening.** A11y, perf, SEO, security, QA.

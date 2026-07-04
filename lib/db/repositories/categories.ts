@@ -40,6 +40,13 @@ export async function listAllCategorySlugs(): Promise<string[]> {
 
 /* ------------------------------- Admin ------------------------------- */
 
+export async function adminGetCategory(id: string): Promise<Category | null> {
+  const row = await db.query.categories.findFirst({
+    where: eq(categories.id, id),
+  });
+  return row ?? null;
+}
+
 export async function createCategory(data: NewCategory): Promise<Category> {
   const [row] = await db.insert(categories).values(data).returning();
   return row;
