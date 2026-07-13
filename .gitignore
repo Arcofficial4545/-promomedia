@@ -52,5 +52,5 @@ next-env.d.ts
 /CLAUDE.md
 /DATA_LAYER.md
 
-# local Claude Code settings (machine-specific)
-/.claude/settings.local.json
+# local Claude Code files (machine-specific)
+/.claude/
