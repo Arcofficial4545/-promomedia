@@ -357,12 +357,62 @@
     animation: idle-float var(--float-duration, 7s) ease-in-out infinite;
   }
 
+  /* Live-dot ping on the hero eyebrow tag. */
+  @keyframes tag-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    70%,
+    100% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+  }
+
+  .tag-pulse {
+    animation: tag-pulse 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* Hairline scroll cue at the hero's foot. */
+  @keyframes scroll-cue {
+    0% {
+      transform: scaleY(0);
+      transform-origin: top;
+    }
+    45% {
+      transform: scaleY(1);
+      transform-origin: top;
+    }
+    55% {
+      transform: scaleY(1);
+      transform-origin: bottom;
+    }
+    100% {
+      transform: scaleY(0);
+      transform-origin: bottom;
+    }
+  }
+
+  .scroll-cue {
+    animation: scroll-cue 2.2s ease-in-out infinite;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .marquee-track {
       animation: none;
     }
 
     .idle-float {
+      animation: none;
+    }
+
+    .tag-pulse {
+      animation: none;
+      opacity: 0;
+    }
+
+    .scroll-cue {
       animation: none;
     }
   }

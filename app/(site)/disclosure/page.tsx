@@ -39,6 +39,10 @@ export default function DisclosurePage() {
               <a href="/contact" className="font-medium text-pine underline decoration-emerald underline-offset-4 hover:text-emerald-600">
                 contact page
               </a>
+              , or read about{" "}
+              <a href="/how-we-review" className="font-medium text-pine underline decoration-emerald underline-offset-4 hover:text-emerald-600">
+                how we verify offers and write reviews
+              </a>
               .
             </p>
           </div>

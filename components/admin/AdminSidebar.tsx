@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   FileText,
+  GitCompare,
   Image as ImageIcon,
   Inbox,
   LayoutDashboard,
@@ -20,6 +21,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/stores", label: "Stores", icon: Store },
+  { href: "/admin/comparisons", label: "Comparisons", icon: GitCompare },
   { href: "/admin/coupons", label: "Coupons", icon: Ticket },
   { href: "/admin/categories", label: "Categories", icon: Tags },
   { href: "/admin/blog", label: "Blog", icon: FileText },

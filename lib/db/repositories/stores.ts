@@ -18,6 +18,21 @@ export type StoreWithMeta = Store & {
   bestDiscountLabel: string | null;
 };
 
+/**
+ * A store review renders only when it has a verdict, a score, and at least
+ * two good AND two weak points (cons are mandatory — no cons, no review).
+ */
+export function hasCompleteReview(store: Store): boolean {
+  return (
+    !!store.verdict &&
+    store.editorialScore !== null &&
+    Array.isArray(store.goodPoints) &&
+    store.goodPoints.length >= 2 &&
+    Array.isArray(store.weakPoints) &&
+    store.weakPoints.length >= 2
+  );
+}
+
 async function attachMeta(rows: Store[]): Promise<StoreWithMeta[]> {
   if (rows.length === 0) return [];
   const ids = rows.map((s) => s.id);
@@ -161,12 +176,50 @@ export async function getStoreBySlug(
   return withMeta;
 }
 
+/** Active, non-fictional store slugs (sitemap + static params). */
 export async function listAllStoreSlugs(): Promise<string[]> {
   const rows = await db
     .select({ slug: stores.slug })
     .from(stores)
-    .where(eq(stores.isActive, true));
+    .where(and(eq(stores.isActive, true), eq(stores.isFictional, false)));
   return rows.map((r) => r.slug);
+}
+
+/** Stores that have a complete published review (for /reviews, /compare). */
+export async function listReviewedStores(): Promise<StoreWithMeta[]> {
+  const rows = await db
+    .select()
+    .from(stores)
+    .where(and(eq(stores.isActive, true), eq(stores.isFictional, false)))
+    .orderBy(desc(stores.editorialScore));
+  const complete = rows.filter(hasCompleteReview);
+  return attachMeta(complete);
+}
+
+/** Fetch several stores by id, with meta (for comparisons). */
+export async function getStoresByIds(
+  ids: string[],
+): Promise<StoreWithMeta[]> {
+  if (ids.length === 0) return [];
+  const rows = await db.select().from(stores).where(inArray(stores.id, ids));
+  return attachMeta(rows);
+}
+
+/** Fetch several stores by slug (for the alternatives section). */
+export async function getStoresBySlugs(
+  slugs: string[],
+): Promise<StoreWithMeta[]> {
+  if (slugs.length === 0) return [];
+  const rows = await db
+    .select()
+    .from(stores)
+    .where(and(inArray(stores.slug, slugs), eq(stores.isActive, true)));
+  const withMeta = await attachMeta(rows);
+  // Preserve the requested order.
+  const bySlug = new Map(withMeta.map((s) => [s.slug, s]));
+  return slugs
+    .map((slug) => bySlug.get(slug))
+    .filter((s): s is StoreWithMeta => s !== undefined);
 }
 
 /* ------------------------------- Admin ------------------------------- */

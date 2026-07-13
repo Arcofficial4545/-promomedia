@@ -14,8 +14,9 @@ export function toTicketCoupon(coupon: CouponWithStore): TicketCoupon {
     isVerified: coupon.isVerified,
     isExclusive: coupon.isExclusive,
     clickCount: coupon.clickCount,
-    revealCount: coupon.revealCount,
-    successReports: coupon.successReports,
+    lastVerifiedAt: coupon.lastVerifiedAt,
+    worksCount: coupon.worksCount,
+    failsCount: coupon.failsCount,
     store: {
       id: coupon.store.id,
       name: coupon.store.name,

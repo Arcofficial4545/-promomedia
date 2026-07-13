@@ -15,6 +15,27 @@
       "when": 1783121706240,
       "tag": "0001_contact-messages",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1783450770894,
+      "tag": "0002_v2-company-pages",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1783897370921,
+      "tag": "0003_watery_vision",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1783898250440,
+      "tag": "0004_wandering_sasquatch",
+      "breakpoints": true
     }
   ]
 }

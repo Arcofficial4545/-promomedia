@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { createContactMessage } from "@/lib/db/repositories/contact";
 import { subscribeEmail } from "@/lib/db/repositories/newsletter";
+import { sendContactNotification } from "@/lib/email/notify";
 import { clientKeyFromHeaders, rateLimit } from "@/lib/rateLimit";
 import { contactSchema, newsletterSchema } from "@/lib/validators/public";
 
@@ -52,6 +53,14 @@ export async function submitContactMessage(
   }
 
   await createContactMessage({
+    name: parsed.data.name,
+    email: parsed.data.email,
+    message: parsed.data.message,
+  });
+
+  // Notify the owner inbox. Awaited so the request isn't torn down before the
+  // send completes, but a failure never blocks the submission (it's stored).
+  await sendContactNotification({
     name: parsed.data.name,
     email: parsed.data.email,
     message: parsed.data.message,

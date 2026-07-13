@@ -87,6 +87,45 @@ export type TiptapDoc = {
   content?: unknown[];
 };
 
+/* ------------------------- Company-page content (v2) ------------------- */
+
+export type PricingRow = {
+  plan: string;
+  price: string;
+  note: string;
+};
+
+export type RedeemStep = {
+  step: number;
+  text: string;
+};
+
+export type FaqItem = {
+  q: string;
+  a: string;
+};
+
+/** One scored criterion in the review scorecard (0–10). */
+export type RatingCriterion = {
+  label: string;
+  score: number;
+};
+
+/** One row of a head-to-head comparison table. */
+export type ComparisonCriterion = {
+  label: string;
+  aText: string;
+  bText: string;
+  winner: "a" | "b" | "tie";
+  note?: string;
+};
+
+/** An editor's-pick slot on the reviews hub (site settings). */
+export type EditorPick = {
+  slug: string;
+  label: string;
+};
+
 /* ------------------------------------------------------------------ */
 /* Tables                                                              */
 /* ------------------------------------------------------------------ */
@@ -108,6 +147,37 @@ export const stores = sqliteTable(
     seoTitle: text("seo_title"),
     seoDescription: text("seo_description"),
     ogImageUrl: text("og_image_url"),
+    /* -------- Company page (v2). All nullable so v1 rows migrate. ------ */
+    /** Demo-only brand: carries fake codes, excluded from sitemap/JSON-LD. */
+    isFictional: bool("is_fictional"),
+    heroSummary: text("hero_summary"),
+    verdict: text("verdict"),
+    editorialScore: real("editorial_score"),
+    useItFor: text("use_it_for"),
+    skipItIf: text("skip_it_if"),
+    goodPoints: text("good_points", { mode: "json" }).$type<string[]>(),
+    weakPoints: text("weak_points", { mode: "json" }).$type<string[]>(),
+    pricingSummary: text("pricing_summary", { mode: "json" }).$type<PricingRow[]>(),
+    pricingUrl: text("pricing_url"),
+    howToRedeem: text("how_to_redeem", { mode: "json" }).$type<RedeemStep[]>(),
+    faq: text("faq", { mode: "json" }).$type<FaqItem[]>(),
+    alternativeSlugs: text("alternative_slugs", { mode: "json" }).$type<string[]>(),
+    lastReviewedAt: integer("last_reviewed_at", { mode: "timestamp_ms" }),
+    /* -------- Review scorecard + long-form body (v2, Section 7). --------- */
+    /** 4–5 scored criteria rendered as the scorecard bars. */
+    ratingBreakdown: text("rating_breakdown", { mode: "json" }).$type<
+      RatingCriterion[]
+    >(),
+    /** Long-form review body, Tiptap JSON — rendered by ArticleRenderer. */
+    reviewBody: text("review_body", { mode: "json" }).$type<TiptapDoc>(),
+    /** Local /public paths to screenshots for the strip. */
+    screenshots: text("screenshots", { mode: "json" }).$type<string[]>(),
+    coverImageUrl: text("cover_image_url"),
+    /** e.g. "Free plan · paid from $16/mo". */
+    startingPriceLabel: text("starting_price_label"),
+    /** Brand theme-color (from <meta name="theme-color">) — tints the
+     * letter-tile fallback when no logo file exists. */
+    themeColor: text("theme_color"),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -115,6 +185,45 @@ export const stores = sqliteTable(
     uniqueIndex("stores_slug_idx").on(t.slug),
     index("stores_active_idx").on(t.isActive),
     index("stores_featured_idx").on(t.isFeatured),
+  ],
+);
+
+export const comparisons = sqliteTable(
+  "comparisons",
+  {
+    id: id(),
+    slug: text("slug").notNull(),
+    title: text("title").notNull(),
+    subtitle: text("subtitle").notNull().default(""),
+    storeAId: text("store_a_id")
+      .notNull()
+      .references(() => stores.id, { onDelete: "cascade" }),
+    storeBId: text("store_b_id")
+      .notNull()
+      .references(() => stores.id, { onDelete: "cascade" }),
+    intro: text("intro").notNull().default(""),
+    criteria: text("criteria", { mode: "json" })
+      .notNull()
+      .$type<ComparisonCriterion[]>()
+      .default([]),
+    /** "Choose {A} if…" */
+    verdictA: text("verdict_a").notNull().default(""),
+    /** "Choose {B} if…" */
+    verdictB: text("verdict_b").notNull().default(""),
+    bottomLine: text("bottom_line").notNull().default(""),
+    status: text("status", { enum: ["draft", "published"] })
+      .notNull()
+      .default("draft"),
+    isFeatured: bool("is_featured"),
+    seoTitle: text("seo_title"),
+    seoDescription: text("seo_description"),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex("comparisons_slug_idx").on(t.slug),
+    index("comparisons_status_idx").on(t.status),
+    index("comparisons_featured_idx").on(t.isFeatured),
   ],
 );
 
@@ -173,6 +282,13 @@ export const coupons = sqliteTable(
     isVerified: bool("is_verified"),
     isExclusive: bool("is_exclusive"),
     isActive: bool("is_active", true),
+    /** `demo` = fake code on a fictional brand, for UI demonstration only. */
+    sourceType: text("source_type", { enum: ["official", "demo"] })
+      .notNull()
+      .default("official"),
+    lastVerifiedAt: integer("last_verified_at", { mode: "timestamp_ms" }),
+    worksCount: integer("works_count").notNull().default(0),
+    failsCount: integer("fails_count").notNull().default(0),
     clickCount: integer("click_count").notNull().default(0),
     revealCount: integer("reveal_count").notNull().default(0),
     successReports: integer("success_reports").notNull().default(0),
@@ -354,8 +470,31 @@ export const settings = sqliteTable("settings", {
       globalCooldownHours: 24,
       defaultDelayMs: 12_000,
     }),
+  /** Editor's-pick slots on the reviews hub, e.g. "Best overall". */
+  editorPicks: text("editor_picks", { mode: "json" })
+    .notNull()
+    .$type<EditorPick[]>()
+    .default([]),
   updatedAt: updatedAt(),
 });
+
+export const codeFeedback = sqliteTable(
+  "code_feedback",
+  {
+    id: id(),
+    couponId: text("coupon_id")
+      .notNull()
+      .references(() => coupons.id, { onDelete: "cascade" }),
+    worked: bool("worked"),
+    /** Hashed visitor key for dedupe — never raw PII. */
+    visitorHash: text("visitor_hash").notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index("code_feedback_coupon_idx").on(t.couponId),
+    uniqueIndex("code_feedback_dedupe_idx").on(t.couponId, t.visitorHash),
+  ],
+);
 
 export const contactMessages = sqliteTable(
   "contact_messages",
@@ -449,6 +588,17 @@ export const authorsRelations = relations(authors, ({ many }) => ({
   posts: many(posts),
 }));
 
+export const comparisonsRelations = relations(comparisons, ({ one }) => ({
+  storeA: one(stores, {
+    fields: [comparisons.storeAId],
+    references: [stores.id],
+  }),
+  storeB: one(stores, {
+    fields: [comparisons.storeBId],
+    references: [stores.id],
+  }),
+}));
+
 /* ------------------------------------------------------------------ */
 /* Row types                                                           */
 /* ------------------------------------------------------------------ */
@@ -470,3 +620,6 @@ export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
 export type Settings = typeof settings.$inferSelect;
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type ContactMessage = typeof contactMessages.$inferSelect;
+export type CodeFeedback = typeof codeFeedback.$inferSelect;
+export type Comparison = typeof comparisons.$inferSelect;
+export type NewComparison = typeof comparisons.$inferInsert;

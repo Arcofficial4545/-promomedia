@@ -13,7 +13,7 @@ export function StoreCard({ store }: { store: StoreWithMeta }) {
         <div className="min-w-0 flex-1">
           <h3 className="truncate font-display text-lg font-semibold text-ink">
             <Link
-              href={`/stores/${store.slug}`}
+              href={`/tools/${store.slug}`}
               className="after:absolute after:inset-0"
             >
               {store.name}

@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { AtSign, Mail, Rss } from "lucide-react";
-import { Container } from "@/components/ui/Container";
+import { Logo } from "@/components/marketing/Logo";
 import { NewsletterForm } from "@/components/marketing/NewsletterForm";
+import { getSettings } from "@/lib/db/repositories/settings";
 
 const columns = [
   {
-    heading: "Browse",
+    heading: "Explore",
     links: [
-      { href: "/stores", label: "All stores" },
-      { href: "/coupons", label: "All coupons" },
-      { href: "/categories", label: "Categories" },
+      { href: "/reviews", label: "Reviews" },
+      { href: "/compare", label: "Compare" },
+      { href: "/tools", label: "Tools" },
+      { href: "/deals", label: "Deals" },
       { href: "/blog", label: "Blog" },
     ],
   },
@@ -27,6 +29,7 @@ const columns = [
     links: [
       { href: "/about", label: "About" },
       { href: "/contact", label: "Contact" },
+      { href: "/how-we-review", label: "How we review" },
       { href: "/disclosure", label: "How we make money" },
     ],
   },
@@ -40,39 +43,104 @@ const columns = [
   },
 ];
 
-export function Footer() {
+/** Subtle circular icon button used for the social/utility row. */
+function SocialButton({
+  href,
+  label,
+  external,
+  children,
+}: {
+  href: string;
+  label: string;
+  external?: boolean;
+  children: React.ReactNode;
+}) {
+  const className =
+    "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors hover:border-emerald/40 hover:bg-emerald/10 hover:text-emerald";
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={label}
+        className={className}
+      >
+        {children}
+      </a>
+    );
+  }
   return (
-    <footer className="bg-pine text-white">
-      <Container size="wide" className="py-16">
-        <div className="grid gap-12 lg:grid-cols-[2fr_3fr]">
-          <div className="max-w-sm">
-            <p className="font-display text-2xl font-bold tracking-tight">
-              Promopedia
+    <Link href={href} aria-label={label} className={className}>
+      {children}
+    </Link>
+  );
+}
+
+export async function Footer() {
+  const settings = await getSettings();
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="border-t border-white/10 bg-pine text-white">
+      <div className="mx-auto w-full max-w-[92rem] px-6 sm:px-10 lg:px-14">
+        {/* ----------------------------------------- Brand + links */}
+        <div className="grid gap-12 py-16 lg:grid-cols-[1.4fr_2fr] lg:gap-24 lg:py-20">
+          {/* Brand + newsletter */}
+          <div className="max-w-md">
+            <Logo
+              id="pp-footer"
+              name={settings.siteName}
+              tone="light"
+              markClassName="h-9 w-9"
+              wordmarkClassName="text-2xl"
+            />
+            <p className="mt-4 text-sm leading-relaxed text-mint/75">
+              {settings.footerTagline}
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-mint/80">
-              Verified deals and sharp editorial coverage of AI tools, SaaS
-              products, and digital services. Updated daily.
-            </p>
-            <div className="mt-6">
-              <p className="text-sm font-semibold text-mint">
+
+            <div className="mt-8">
+              <p className="text-sm font-semibold text-white">
                 Get the best deals in your inbox
               </p>
-              <NewsletterForm source="footer" className="mt-3" />
+              <p className="mt-1 text-xs text-mint/60">
+                One email a week — reviews, comparisons, and verified deals.
+              </p>
+              <NewsletterForm source="footer" className="mt-3 max-w-sm" />
+            </div>
+
+            <div className="mt-8 flex items-center gap-2.5">
+              {settings.socialLinks.x && (
+                <SocialButton
+                  href={settings.socialLinks.x}
+                  label={`${settings.siteName} on X`}
+                  external
+                >
+                  <AtSign className="h-4 w-4" aria-hidden="true" />
+                </SocialButton>
+              )}
+              <SocialButton href="/rss.xml" label="Promopedia RSS feed">
+                <Rss className="h-4 w-4" aria-hidden="true" />
+              </SocialButton>
+              <SocialButton href="/contact" label="Contact Promopedia">
+                <Mail className="h-4 w-4" aria-hidden="true" />
+              </SocialButton>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {/* Link columns */}
+          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
             {columns.map((column) => (
               <nav key={column.heading} aria-label={column.heading}>
-                <p className="text-sm font-semibold tracking-wide text-mint uppercase">
+                <p className="font-mono text-xs font-semibold tracking-[0.15em] text-mint/60 uppercase">
                   {column.heading}
                 </p>
-                <ul className="mt-4 space-y-2.5">
+                <ul className="mt-4 space-y-3">
                   {column.links.map((link) => (
                     <li key={`${column.heading}-${link.href}`}>
                       <Link
                         href={link.href}
-                        className="text-sm text-white/75 transition-colors hover:text-emerald"
+                        className="text-sm text-white/70 transition-colors hover:text-emerald"
                       >
                         {link.label}
                       </Link>
@@ -84,47 +152,43 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-6 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
-            <a
-              href="https://x.com/promopedia"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Promopedia on X"
-              className="text-white/60 transition-colors hover:text-emerald"
-            >
-              <AtSign className="h-5 w-5" aria-hidden="true" />
-            </a>
-            <Link
-              href="/rss.xml"
-              aria-label="Promopedia RSS feed"
-              className="text-white/60 transition-colors hover:text-emerald"
-            >
-              <Rss className="h-5 w-5" aria-hidden="true" />
+        {/* ----------------------------------------- Bottom bar */}
+        <div className="flex flex-col gap-4 border-t border-white/10 py-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-white/50">
+            &copy; {year} {settings.siteName}. All rights reserved.
+          </p>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-white/50">
+            <Link href="/privacy" className="transition-colors hover:text-white">
+              Privacy
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-white">
+              Terms
             </Link>
             <Link
-              href="/contact"
-              aria-label="Contact Promopedia"
-              className="text-white/60 transition-colors hover:text-emerald"
+              href="/disclosure"
+              className="transition-colors hover:text-white"
             >
-              <Mail className="h-5 w-5" aria-hidden="true" />
+              Disclosure
             </Link>
           </div>
-          <p className="text-xs text-white/50">
-            &copy; {new Date().getFullYear()} Promopedia. All rights reserved.
-          </p>
         </div>
 
-        <p className="mt-6 text-xs leading-relaxed text-white/40">
-          When you buy through some links on Promopedia, we may earn a
-          commission at no extra cost to you. This never influences what we
-          cover or recommend.{" "}
-          <Link href="/disclosure" className="underline hover:text-white/70">
-            Learn more
-          </Link>
-          .
-        </p>
-      </Container>
+        {/* ----------------------------------------- Fine print */}
+        <div className="border-t border-white/10 py-6">
+          <p className="max-w-4xl text-xs leading-relaxed text-white/40">
+            {settings.disclosureText}{" "}
+            <Link href="/disclosure" className="underline hover:text-white/70">
+              Learn more
+            </Link>
+            .
+          </p>
+          <p className="mt-2 max-w-4xl text-xs leading-relaxed text-white/35">
+            All product names, logos, and brands are property of their
+            respective owners and are used for identification purposes only. Use
+            of these names, logos, and brands does not imply endorsement.
+          </p>
+        </div>
+      </div>
     </footer>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { Toaster } from "sonner";
+import { AdminBreadcrumb } from "@/components/admin/AdminBreadcrumb";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { logout } from "@/lib/actions/auth";
 import { requireAdmin } from "@/lib/auth/current";
@@ -58,7 +59,10 @@ export default async function AdminLayout({
             </button>
           </form>
         </div>
-        <main className="p-5 sm:p-8">{children}</main>
+        <main className="p-5 sm:p-8">
+          <AdminBreadcrumb />
+          {children}
+        </main>
       </div>
       <Toaster position="bottom-right" />
     </div>

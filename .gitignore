@@ -46,3 +46,11 @@ next-env.d.ts
 # uploaded media (local storage adapter)
 /public/uploads/*
 !/public/uploads/.gitkeep
+
+# dev-only docs (kept locally, not published to the repo)
+/AGENTS.md
+/CLAUDE.md
+/DATA_LAYER.md
+
+# local Claude Code settings (machine-specific)
+/.claude/settings.local.json

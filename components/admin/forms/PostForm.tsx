@@ -18,6 +18,7 @@ import {
 import type { EditorCouponOption } from "@/components/admin/editor/extensions";
 import { TiptapEditor } from "@/components/admin/editor/TiptapEditor";
 import { LogoUploadField } from "@/components/admin/forms/LogoUploadField";
+import { OgPreview } from "@/components/admin/forms/OgPreview";
 import { slugifyClient, toDatetimeLocal } from "./utils";
 
 type Option = { id: string; name: string };
@@ -234,6 +235,11 @@ export function PostForm({
                 {...register("seoDescription")}
               />
             </Field>
+            <OgPreview
+              title={watch("seoTitle") || watch("title")}
+              description={watch("seoDescription") || watch("excerpt")}
+              slug={watch("slug")}
+            />
           </div>
         </div>
       </div>

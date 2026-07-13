@@ -17,6 +17,39 @@ const optionalText = z
   .max(300)
   .transform((v) => (v === "" ? null : v));
 
+const optionalLongText = z
+  .string()
+  .trim()
+  .max(3000)
+  .transform((v) => (v === "" ? null : v));
+
+/** Newline-separated textarea → trimmed string[] (empty lines dropped). */
+const lines = z
+  .string()
+  .default("")
+  .transform((s) =>
+    s
+      .split("\n")
+      .map((x) => x.trim())
+      .filter(Boolean),
+  );
+
+/** JSON textarea → parsed value, or null when blank; friendly error on bad JSON. */
+const jsonOrNull = z.string().default("").transform((s, ctx) => {
+  const t = s.trim();
+  if (!t) return null;
+  try {
+    return JSON.parse(t) as unknown;
+  } catch {
+    ctx.addIssue({ code: "custom", message: "Invalid JSON — check the format." });
+    return z.NEVER;
+  }
+});
+
+const optionalScore = z
+  .union([z.coerce.number().min(0).max(10), z.literal("")])
+  .transform((v) => (v === "" ? null : v));
+
 export const storeSchema = z.object({
   name: z.string().trim().min(2).max(120),
   slug,
@@ -31,6 +64,24 @@ export const storeSchema = z.object({
   seoTitle: optionalText,
   seoDescription: optionalText,
   categoryIds: z.array(z.uuid()).default([]),
+  /* ------------------------------ Review (v2) ------------------------------ */
+  editorialScore: optionalScore,
+  heroSummary: optionalLongText,
+  verdict: optionalLongText,
+  useItFor: optionalLongText,
+  skipItIf: optionalLongText,
+  startingPriceLabel: optionalText,
+  pricingUrl: optionalUrl,
+  goodPoints: lines,
+  weakPoints: lines,
+  screenshots: lines,
+  alternativeSlugs: z.array(z.string().trim().min(1)).max(3).default([]),
+  ratingBreakdown: jsonOrNull,
+  pricingSummary: jsonOrNull,
+  faq: jsonOrNull,
+  reviewBody: jsonOrNull,
+  /** Manual override; the action sets "now" when a review exists and this is blank. */
+  lastReviewedAt: z.string().transform((v) => (v ? new Date(v) : null)),
 });
 
 export const couponSchema = z
@@ -126,6 +177,37 @@ export const promoSchema = z
     { message: "Coupon-highlight promos need a coupon.", path: ["couponId"] },
   );
 
+export const comparisonSchema = z
+  .object({
+    title: z.string().trim().min(2).max(160),
+    slug,
+    subtitle: z.string().trim().max(300).default(""),
+    storeAId: z.uuid({ error: "Pick the first tool." }),
+    storeBId: z.uuid({ error: "Pick the second tool." }),
+    intro: z.string().trim().max(4000).default(""),
+    criteria: z.string().default("").transform((s, ctx) => {
+      const t = s.trim();
+      if (!t) return [];
+      try {
+        return JSON.parse(t) as unknown[];
+      } catch {
+        ctx.addIssue({ code: "custom", message: "Criteria: invalid JSON." });
+        return z.NEVER;
+      }
+    }),
+    verdictA: z.string().trim().max(800).default(""),
+    verdictB: z.string().trim().max(800).default(""),
+    bottomLine: z.string().trim().max(1000).default(""),
+    status: z.enum(["draft", "published"]),
+    isFeatured: z.coerce.boolean().default(false),
+    seoTitle: optionalText,
+    seoDescription: optionalText,
+  })
+  .refine((d) => d.storeAId !== d.storeBId, {
+    message: "Pick two different tools.",
+    path: ["storeBId"],
+  });
+
 export const settingsSchema = z.object({
   siteName: z.string().trim().min(2).max(80),
   seoDefaultTitle: z.string().trim().min(2).max(160),
@@ -146,3 +228,4 @@ export type CategoryInput = z.input<typeof categorySchema>;
 export type PostInput = z.input<typeof postSchema>;
 export type PromoInput = z.input<typeof promoSchema>;
 export type SettingsInput = z.input<typeof settingsSchema>;
+export type ComparisonInput = z.input<typeof comparisonSchema>;

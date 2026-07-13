@@ -120,8 +120,9 @@ export function PromoForm({
           isVerified: previewCoupon.isVerified,
           isExclusive: false,
           clickCount: 0,
-          revealCount: 0,
-          successReports: 0,
+          lastVerifiedAt: null,
+          worksCount: 0,
+          failsCount: 0,
           store: {
             id: "preview",
             name: previewCoupon.storeName,
@@ -198,7 +199,7 @@ export function PromoForm({
             <input
               id="promo-cta-url"
               type="url"
-              placeholder="https://... or /stores/..."
+              placeholder="https://... or /tools/..."
               className={inputClasses}
               {...register("ctaUrl")}
             />
@@ -206,7 +207,7 @@ export function PromoForm({
         )}
 
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Show on paths" htmlFor="promo-paths" hint="Comma-separated prefixes, e.g. /blog, /stores. Empty = everywhere.">
+          <Field label="Show on paths" htmlFor="promo-paths" hint="Comma-separated prefixes, e.g. /blog, /tools. Empty = everywhere.">
             <input id="promo-paths" className={inputClasses} {...register("paths")} />
           </Field>
           <Field label="Never on paths" htmlFor="promo-exclude" hint="e.g. /admin">

@@ -1,0 +1,1 @@
+ALTER TABLE `stores` ADD `theme_color` text;

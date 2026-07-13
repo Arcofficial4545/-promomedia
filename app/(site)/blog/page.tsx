@@ -58,7 +58,7 @@ export default async function BlogIndexPage({
       />
       <PageHeader
         title="The Promopedia blog"
-        description="Reviews, comparisons, and buying guides — written before the discount, not for it."
+        description="Reviews, comparisons, and buying guides for AI tools, SaaS, and digital services. We write the way we want to read: opinionated, specific, and honest about the trade-offs."
       />
       <Section padding="tight">
         <Container size="wide">

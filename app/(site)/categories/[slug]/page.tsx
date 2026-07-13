@@ -99,7 +99,7 @@ export default async function CategoryPage({
               {category.name} stores
             </h2>
             <Link
-              href={`/stores?category=${category.slug}`}
+              href={`/tools?category=${category.slug}`}
               className="inline-flex items-center gap-1 text-sm font-semibold text-pine hover:text-emerald-600"
             >
               View all

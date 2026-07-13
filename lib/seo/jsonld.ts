@@ -50,34 +50,95 @@ export function breadcrumbLd(
   };
 }
 
+/**
+ * Store JSON-LD. Real offers only (`sourceType === "official"`); never emits
+ * AggregateRating — editorial opinion is expressed via Review LD instead.
+ */
 export function storeLd(store: Store, activeCoupons: Coupon[]): JsonLdObject {
+  const officialOffers = activeCoupons.filter(
+    (c) => c.sourceType === "official",
+  );
   return {
     "@context": "https://schema.org",
     "@type": "Store",
     name: store.name,
-    url: `${SITE_URL}/stores/${store.slug}`,
+    url: `${SITE_URL}/tools/${store.slug}`,
     description: store.tagline,
-    ...(store.rating > 0
-      ? {
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: store.rating,
-            bestRating: 5,
-            ratingCount: Math.max(
-              1,
-              activeCoupons.reduce((sum, c) => sum + c.successReports, 0),
-            ),
-          },
-        }
-      : {}),
-    makesOffer: activeCoupons.slice(0, 20).map((coupon) => ({
+    makesOffer: officialOffers.slice(0, 20).map((coupon) => ({
       "@type": "Offer",
       name: coupon.title,
-      url: `${SITE_URL}/stores/${store.slug}`,
+      url: `${SITE_URL}/tools/${store.slug}`,
       availability: "https://schema.org/InStock",
       ...(coupon.expiresAt
         ? { validThrough: coupon.expiresAt.toISOString() }
         : {}),
+    })),
+  };
+}
+
+/**
+ * Product JSON-LD (Section 7): brand, image, and one Offer per active official
+ * deal. No AggregateRating — the editorial opinion is a single Review node.
+ */
+export function productLd(store: Store, activeCoupons: Coupon[]): JsonLdObject {
+  const official = activeCoupons.filter((c) => c.sourceType === "official");
+  const image = store.coverImageUrl
+    ? `${SITE_URL}${store.coverImageUrl}`
+    : ogImageUrl(store.name, store.tagline);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: store.name,
+    description: store.tagline,
+    image,
+    brand: { "@type": "Brand", name: store.name },
+    url: `${SITE_URL}/tools/${store.slug}`,
+    offers: official.slice(0, 20).map((coupon) => ({
+      "@type": "Offer",
+      name: coupon.title,
+      url: `${SITE_URL}/tools/${store.slug}`,
+      availability: "https://schema.org/InStock",
+      ...(coupon.expiresAt
+        ? { validThrough: coupon.expiresAt.toISOString() }
+        : {}),
+    })),
+  };
+}
+
+/** Editorial review LD — rendered only when the store has a full review. */
+export function reviewLd(store: Store, authorName: string): JsonLdObject {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    itemReviewed: {
+      "@type": "Organization",
+      name: store.name,
+      url: store.websiteUrl,
+    },
+    author: { "@type": "Person", name: authorName },
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: store.editorialScore,
+      bestRating: 10,
+      worstRating: 0,
+    },
+    ...(store.lastReviewedAt
+      ? { datePublished: store.lastReviewedAt.toISOString().slice(0, 10) }
+      : {}),
+    reviewBody: store.verdict ?? "",
+  };
+}
+
+/** FAQPage LD from a store's FAQ items. */
+export function faqLd(items: { q: string; a: string }[]): JsonLdObject {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
     })),
   };
 }
@@ -130,5 +191,28 @@ export function articleLd(post: {
 export function ogImageUrl(title: string, subtitle?: string): string {
   const params = new URLSearchParams({ title });
   if (subtitle) params.set("subtitle", subtitle);
+  return `${SITE_URL}/og?${params.toString()}`;
+}
+
+/** Review OG card variant — pine bg, name, big mono score disc. */
+export function ogReviewImageUrl(
+  name: string,
+  score: number | null,
+): string {
+  const params = new URLSearchParams({ variant: "review", title: name });
+  if (score !== null) params.set("score", score.toFixed(1));
+  return `${SITE_URL}/og?${params.toString()}`;
+}
+
+/** VS OG card variant — two names and both scores. */
+export function ogVsImageUrl(
+  a: string,
+  b: string,
+  scoreA: number | null,
+  scoreB: number | null,
+): string {
+  const params = new URLSearchParams({ variant: "vs", a, b });
+  if (scoreA !== null) params.set("sa", scoreA.toFixed(1));
+  if (scoreB !== null) params.set("sb", scoreB.toFixed(1));
   return `${SITE_URL}/og?${params.toString()}`;
 }

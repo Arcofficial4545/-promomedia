@@ -1,6 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -8,51 +10,79 @@ import { useLenis } from "lenis/react";
 import { Search } from "lucide-react";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import { useMediaQuery } from "@/components/motion/useMediaQuery";
-import { CountUp } from "./CountUp";
-import { FloatingTicket, type FloatingTicketData } from "./FloatingTicket";
 import { HeroGridCanvas } from "./HeroGridCanvas";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export type TickerItem = {
-  storeName: string;
-  discountLabel: string;
-  isNew: boolean;
+export type HeroCard = {
+  name: string;
+  score: number;
+  logoUrl: string | null;
 };
+
+export type HeroQuickTag = { label: string; href: string };
+export type HeroVs = { a: string; b: string; slug: string };
 
 type HeroProps = {
-  couponCount: number;
-  storeCount: number;
-  tickets: FloatingTicketData[];
-  tickerItems: TickerItem[];
+  toolsReviewed: number;
+  comparisonsCount: number;
+  dealsCount: number;
+  cards: HeroCard[];
+  vsChips: HeroVs[];
+  /** Deep links rendered as the quick-tag row under the search bar. */
+  quickTags: HeroQuickTag[];
 };
 
-const HEADLINE: { word: string; accent?: boolean }[] = [
-  { word: "Find" },
-  { word: "the" },
-  { word: "code", accent: true },
-  { word: "before" },
-  { word: "you" },
-  { word: "checkout." },
+/** Positions + entrance/parallax hooks for the floating evidence chips.
+ * Four slots — balanced around the centered content without crowding. */
+const FLOAT_SLOTS = [
+  "hero-float-a absolute top-[18%] left-[4%] -rotate-3 idle-float",
+  "hero-float-b absolute top-[22%] right-[4%] rotate-2 idle-float [--float-duration:8s]",
+  "hero-float-c absolute bottom-[28%] left-[6%] rotate-1 idle-float [--float-duration:9s]",
+  "hero-float-d absolute bottom-[18%] right-[5%] -rotate-2 idle-float [--float-duration:7.5s]",
 ];
 
-export function Hero({
-  couponCount,
-  storeCount,
-  tickets,
-  tickerItems,
-}: HeroProps) {
+/** The hook: independent testing, a real score, and the tools worth buying. */
+const HEADLINE: { word: string; accent?: boolean }[] = [
+  { word: "Tested." },
+  { word: "Scored." },
+  { word: "Worth", accent: true },
+  { word: "buying.", accent: true },
+];
+
+export function Hero({ cards, vsChips, quickTags }: HeroProps) {
   const scope = useRef<HTMLDivElement>(null);
-  const ticketsLayerRef = useRef<HTMLDivElement>(null);
+  const cardsLayerRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
   const reducedMotion = useReducedMotion();
   const isTouch = useMediaQuery("(pointer: coarse)", true);
   const lenis = useLenis();
+
+  // "/" focuses the search — command-bar behavior, standard and accessible.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = document.activeElement;
+      if (
+        el instanceof HTMLElement &&
+        (el.tagName === "INPUT" ||
+          el.tagName === "TEXTAREA" ||
+          el.tagName === "SELECT" ||
+          el.isContentEditable)
+      ) {
+        return;
+      }
+      e.preventDefault();
+      searchRef.current?.focus();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   useGSAP(
     () => {
       if (reducedMotion) return;
 
-      // Keep ScrollTrigger in sync with Lenis smooth scrolling.
       lenis?.on("scroll", ScrollTrigger.update);
 
       // Kinetic headline: masked word rise, staggered.
@@ -82,9 +112,9 @@ export function Hero({
         },
       );
 
-      // Floating tickets drift in.
+      // Floating evidence chips drift in.
       gsap.fromTo(
-        ".hero-ticket",
+        ".hero-float",
         { opacity: 0, scale: 0.92, y: 26 },
         {
           opacity: 1,
@@ -92,12 +122,12 @@ export function Hero({
           y: 0,
           duration: 1,
           ease: "power3.out",
-          stagger: 0.12,
+          stagger: 0.14,
           delay: 0.7,
         },
       );
 
-      // Parallax out on scroll: content lifts and fades, tickets rotate away.
+      // Parallax out on scroll.
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: scope.current,
@@ -107,18 +137,18 @@ export function Hero({
         },
       });
       tl.to(".hero-content", { yPercent: -14, opacity: 0.25 }, 0);
-      tl.to(".hero-ticket-a", { yPercent: -36, rotate: 7 }, 0);
-      tl.to(".hero-ticket-b", { yPercent: -52, rotate: -8 }, 0);
-      tl.to(".hero-ticket-c", { yPercent: -28, rotate: 5 }, 0);
-      tl.to(".hero-ticket-d", { yPercent: -44, rotate: -5 }, 0);
+      tl.to(".hero-float-a", { yPercent: -40, rotate: 6 }, 0);
+      tl.to(".hero-float-b", { yPercent: -30, rotate: -6 }, 0);
+      tl.to(".hero-float-c", { yPercent: -52, rotate: 4 }, 0);
+      tl.to(".hero-float-d", { yPercent: -24, rotate: -5 }, 0);
 
-      // Mouse parallax on the ticket layer.
-      if (!isTouch && ticketsLayerRef.current) {
-        const xTo = gsap.quickTo(ticketsLayerRef.current, "x", {
+      // Mouse parallax on the chip layer.
+      if (!isTouch && cardsLayerRef.current) {
+        const xTo = gsap.quickTo(cardsLayerRef.current, "x", {
           duration: 0.7,
           ease: "power3.out",
         });
-        const yTo = gsap.quickTo(ticketsLayerRef.current, "y", {
+        const yTo = gsap.quickTo(cardsLayerRef.current, "y", {
           duration: 0.7,
           ease: "power3.out",
         });
@@ -133,82 +163,66 @@ export function Hero({
     { scope, dependencies: [reducedMotion, isTouch, lenis] },
   );
 
-  const [ticketA, ticketB, ticketC, ticketD] = tickets;
+  // Interleave score chips and VS chips, then drop into the fixed slots.
+  const floatItems: React.ReactNode[] = [];
+  const maxLen = Math.max(cards.length, vsChips.length);
+  for (let i = 0; i < maxLen; i++) {
+    if (cards[i]) floatItems.push(<HeroScoreChip card={cards[i]} />);
+    if (vsChips[i]) floatItems.push(<HeroVsChip vs={vsChips[i]} />);
+  }
+  const floats = floatItems.slice(0, FLOAT_SLOTS.length);
 
   return (
     <section
       ref={scope}
-      className="relative isolate flex min-h-[92svh] flex-col overflow-hidden bg-pine text-white"
+      className="relative isolate -mt-[76px] flex min-h-svh flex-col overflow-hidden bg-pine text-white sm:-mt-[80px]"
     >
       <HeroGridCanvas className="absolute inset-0 -z-10 h-full w-full" />
 
-      {/* Floating tickets (decorative, desktop only) */}
+      {/* Floating evidence chips (decorative, desktop only) */}
       <div
-        ref={ticketsLayerRef}
+        ref={cardsLayerRef}
         className="absolute inset-0 -z-[5] hidden lg:block"
         aria-hidden="true"
       >
-        {ticketA && (
-          <FloatingTicket
-            ticket={ticketA}
-            className="hero-ticket hero-ticket-a absolute top-[16%] left-[6%]"
-            floatDuration="7.5s"
-            rotate="-4deg"
-          />
-        )}
-        {ticketB && (
-          <FloatingTicket
-            ticket={ticketB}
-            tone="mint"
-            className="hero-ticket hero-ticket-b absolute top-[58%] left-[9%]"
-            floatDuration="9s"
-            rotate="3deg"
-          />
-        )}
-        {ticketC && (
-          <FloatingTicket
-            ticket={ticketC}
-            tone="mint"
-            className="hero-ticket hero-ticket-c absolute top-[20%] right-[6%]"
-            floatDuration="8s"
-            rotate="5deg"
-          />
-        )}
-        {ticketD && (
-          <FloatingTicket
-            ticket={ticketD}
-            className="hero-ticket hero-ticket-d absolute top-[60%] right-[9%]"
-            floatDuration="10s"
-            rotate="-3deg"
-          />
-        )}
+        {floats.map((chip, i) => (
+          <div key={i} className={`hero-float ${FLOAT_SLOTS[i]}`}>
+            {chip}
+          </div>
+        ))}
       </div>
 
       {/* Main content */}
-      <div className="hero-content mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center px-4 pt-20 pb-28 text-center sm:px-6">
-        <p className="hero-rise font-mono text-xs tracking-[0.25em] text-emerald uppercase">
-          Verified deals on AI tools and SaaS
+      <div className="hero-content mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center px-4 pt-20 pb-24 text-center sm:px-6">
+        {/* Eyebrow: a live capsule tag, not plain text */}
+        <p className="hero-rise inline-flex items-center gap-2.5 rounded-full border border-white/15 px-4 py-1.5 font-mono text-xs tracking-[0.18em] text-mint/85 uppercase">
+          <span className="relative flex h-2 w-2" aria-hidden="true">
+            <span className="tag-pulse absolute inline-flex h-full w-full rounded-full bg-emerald/60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald" />
+          </span>
+          Independent reviews · scored 0–10
         </p>
 
-        <h1 className="mt-6 text-display-xl font-bold text-balance">
+        <h1 className="mt-7 text-h1 font-bold text-balance sm:text-[2.75rem] lg:text-5xl">
           {HEADLINE.map(({ word, accent }, i) => (
             <span
               key={i}
-              className="inline-block overflow-hidden pb-1 align-bottom"
+              className={`inline-block overflow-hidden pb-1 align-bottom${
+                i < HEADLINE.length - 1 ? " mr-[0.28em]" : ""
+              }`}
             >
               <span
                 className={`hero-word-inner inline-block will-change-transform ${accent ? "text-emerald" : ""}`}
               >
                 {word}
-                {i < HEADLINE.length - 1 ? " " : ""}
               </span>
             </span>
           ))}
         </h1>
 
         <p className="hero-rise mt-6 max-w-xl text-body-lg text-mint/85">
-          Every discount worth having, tested by editors who actually use the
-          tools.
+          We stress-test the AI tools everyone&apos;s arguing about, score them
+          0&ndash;10, and unlock the best honest price on the one you pick.
         </p>
 
         {/* Command-style search */}
@@ -223,16 +237,23 @@ export function Hero({
               aria-hidden="true"
             />
             <label htmlFor="hero-search" className="sr-only">
-              Search deals
+              Search tools, reviews, and comparisons
             </label>
             <input
+              ref={searchRef}
               id="hero-search"
               name="q"
               type="search"
-              placeholder={`Search ${couponCount.toLocaleString("en-US")}+ verified deals`}
+              placeholder="Search tools, reviews, comparisons"
               className="h-11 w-full bg-transparent text-base text-ink outline-none placeholder:text-ink-subtle"
               autoComplete="off"
             />
+            <kbd
+              className="hidden shrink-0 rounded-md border border-line px-2 py-1 font-mono text-xs text-ink-subtle sm:block"
+              aria-hidden="true"
+            >
+              /
+            </kbd>
             <button
               type="submit"
               className="btn-gloss btn-primary press-down inline-flex h-11 shrink-0 items-center rounded-xl px-5 text-sm font-semibold"
@@ -242,62 +263,88 @@ export function Hero({
           </div>
         </form>
 
-        {/* Animated counters */}
-        <dl className="hero-rise mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-mono text-sm text-mint/75">
-          <div className="flex items-baseline gap-1.5">
-            <dt className="sr-only">Active coupons</dt>
-            <dd className="text-lg font-bold text-white">
-              <CountUp value={couponCount} />
-            </dd>
-            <span>active coupons</span>
+        {/* Quick tags — real deep links, the fast path in */}
+        {quickTags.length > 0 && (
+          <div className="hero-rise mt-5 flex flex-wrap items-center justify-center gap-2">
+            <span className="font-mono text-[0.65rem] tracking-[0.18em] text-mint/50 uppercase">
+              Start with
+            </span>
+            {quickTags.map((tag) => (
+              <Link
+                key={tag.href}
+                href={tag.href}
+                className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-mint/85 transition-colors hover:border-emerald hover:text-white"
+              >
+                {tag.label}
+              </Link>
+            ))}
           </div>
-          <span aria-hidden="true" className="text-white/25">
-            /
-          </span>
-          <div className="flex items-baseline gap-1.5">
-            <dt className="sr-only">Stores</dt>
-            <dd className="text-lg font-bold text-white">
-              <CountUp value={storeCount} />
-            </dd>
-            <span>stores</span>
-          </div>
-          <span aria-hidden="true" className="text-white/25">
-            /
-          </span>
-          <div className="flex items-baseline gap-1.5">
-            <dd className="text-white">updated today</dd>
-          </div>
-        </dl>
+        )}
       </div>
 
-      {/* Live deals ticker */}
+      {/* Discreet scroll cue (replaces the retired ticker marquee) */}
       <div
-        className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-pine-900/60 py-3 backdrop-blur-none"
+        className="pointer-events-none absolute inset-x-0 bottom-6 flex flex-col items-center gap-2"
         aria-hidden="true"
       >
-        <div className="marquee-track" style={{ "--marquee-duration": "55s" } as React.CSSProperties}>
-          {[0, 1].map((copy) => (
-            <div key={copy} className="flex shrink-0 items-center">
-              {tickerItems.map((item, i) => (
-                <span
-                  key={`${copy}-${i}`}
-                  className="mx-6 inline-flex items-center gap-2.5 font-mono text-xs tracking-wider whitespace-nowrap text-mint/70 uppercase"
-                >
-                  <span className="font-semibold text-white/85">
-                    {item.storeName}
-                  </span>
-                  {item.discountLabel}
-                  {item.isNew && (
-                    <span className="rounded-full bg-emerald px-1.5 py-0.5 text-[0.6rem] font-bold text-pine-900">
-                      New
-                    </span>
-                  )}
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
+        <span className="font-mono text-[0.6rem] tracking-[0.3em] text-mint/40 uppercase">
+          Scroll
+        </span>
+        <span className="scroll-cue block h-7 w-px bg-white/30" />
       </div>
     </section>
+  );
+}
+
+function HeroScoreChip({ card }: { card: HeroCard }) {
+  return (
+    <div className="flex w-52 items-center gap-3 rounded-2xl border border-white/10 bg-white/95 p-3 shadow-xl backdrop-blur-sm">
+      <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg">
+        {card.logoUrl ? (
+          <Image
+            src={card.logoUrl}
+            alt=""
+            width={28}
+            height={28}
+            unoptimized={/\.(svg|ico)$/i.test(card.logoUrl)}
+            className="h-full w-full object-contain"
+          />
+        ) : (
+          <span className="font-display text-sm font-bold text-pine">
+            {card.name.charAt(0)}
+          </span>
+        )}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-display text-sm font-semibold text-ink">
+          {card.name}
+        </p>
+        <p className="font-mono text-[0.65rem] text-ink-subtle">
+          Promopedia score
+        </p>
+      </div>
+      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-emerald font-mono text-xs font-bold text-pine">
+        {card.score.toFixed(1)}
+      </span>
+    </div>
+  );
+}
+
+function HeroVsChip({ vs }: { vs: HeroVs }) {
+  return (
+    <Link
+      href={`/compare/${vs.slug}`}
+      className="group flex items-center gap-2 rounded-full border border-white/10 bg-pine/90 px-4 py-2.5 shadow-xl backdrop-blur-sm transition-colors hover:bg-pine"
+    >
+      <span className="font-mono text-xs font-bold whitespace-nowrap text-white">
+        {vs.a}
+      </span>
+      <span className="font-mono text-[0.65rem] font-bold text-emerald uppercase">
+        vs
+      </span>
+      <span className="font-mono text-xs font-bold whitespace-nowrap text-white">
+        {vs.b}
+      </span>
+    </Link>
   );
 }

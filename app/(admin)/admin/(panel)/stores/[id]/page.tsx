@@ -4,7 +4,7 @@ import { DeleteButton } from "@/components/admin/DeleteButton";
 import { StoreForm } from "@/components/admin/forms/StoreForm";
 import { removeStore } from "@/lib/actions/admin/stores";
 import { listCategories } from "@/lib/db/repositories/categories";
-import { adminGetStore } from "@/lib/db/repositories/stores";
+import { adminGetStore, adminListStores } from "@/lib/db/repositories/stores";
 
 export default async function EditStorePage({
   params,
@@ -12,9 +12,10 @@ export default async function EditStorePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [store, categories] = await Promise.all([
+  const [store, categories, allStores] = await Promise.all([
     adminGetStore(id),
     listCategories(),
+    adminListStores(),
   ]);
   if (!store) notFound();
 
@@ -32,6 +33,9 @@ export default async function EditStorePage({
       <StoreForm
         store={store}
         categories={categories.map((c) => ({ id: c.id, name: c.name }))}
+        allStores={allStores
+          .filter((s) => s.id !== store.id)
+          .map((s) => ({ slug: s.slug, name: s.name }))}
       />
     </>
   );

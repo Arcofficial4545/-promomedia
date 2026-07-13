@@ -4,12 +4,14 @@ import Link from "next/link";
 import type { ColumnDef } from "@tanstack/react-table";
 import { BadgeCheck, Pencil } from "lucide-react";
 import { AdminTable } from "@/components/admin/AdminTable";
+import { RefetchAssetsButton } from "@/components/admin/RefetchAssetsButton";
 import { Badge } from "@/components/ui/Badge";
 
 export type StoreRow = {
   id: string;
   name: string;
   slug: string;
+  score: number | null;
   rating: number;
   isFeatured: boolean;
   isActive: boolean;
@@ -34,6 +36,20 @@ const columns: ColumnDef<StoreRow, unknown>[] = [
     cell: ({ getValue }) => (
       <span className="text-ink-muted">{String(getValue()) || "—"}</span>
     ),
+  },
+  {
+    accessorKey: "score",
+    header: "Score",
+    cell: ({ getValue }) => {
+      const v = getValue() as number | null;
+      return v === null ? (
+        <span className="text-ink-subtle">—</span>
+      ) : (
+        <Badge variant="pine" className="font-mono">
+          {v.toFixed(1)}
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: "activeCouponCount",
@@ -68,13 +84,16 @@ const columns: ColumnDef<StoreRow, unknown>[] = [
     header: "",
     enableSorting: false,
     cell: ({ row }) => (
-      <Link
-        href={`/admin/stores/${row.original.id}`}
-        className="inline-flex h-8 items-center gap-1 rounded-[var(--radius-btn)] border border-line px-2.5 text-xs font-medium text-ink transition-colors hover:border-emerald-600"
-      >
-        <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
-        Edit
-      </Link>
+      <div className="flex items-center justify-end gap-1.5">
+        <RefetchAssetsButton id={row.original.id} />
+        <Link
+          href={`/admin/stores/${row.original.id}`}
+          className="inline-flex h-8 items-center gap-1 rounded-[var(--radius-btn)] border border-line px-2.5 text-xs font-medium text-ink transition-colors hover:border-emerald-600"
+        >
+          <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+          Edit
+        </Link>
+      </div>
     ),
   },
 ];
