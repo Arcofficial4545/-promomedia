@@ -23,17 +23,14 @@ export async function recordCodeVote(input: {
           eq(codeFeedback.visitorHash, input.visitorHash),
         ),
       )
-      .get();
-    if (existing) return { counted: false };
+      .limit(1);
+    if (existing.length > 0) return { counted: false };
 
-    await tx
-      .insert(codeFeedback)
-      .values({
-        couponId: input.couponId,
-        worked: input.worked,
-        visitorHash: input.visitorHash,
-      })
-      .run();
+    await tx.insert(codeFeedback).values({
+      couponId: input.couponId,
+      worked: input.worked,
+      visitorHash: input.visitorHash,
+    });
 
     await tx
       .update(coupons)
@@ -42,8 +39,7 @@ export async function recordCodeVote(input: {
           ? { worksCount: sql`${coupons.worksCount} + 1` }
           : { failsCount: sql`${coupons.failsCount} + 1` },
       )
-      .where(eq(coupons.id, input.couponId))
-      .run();
+      .where(eq(coupons.id, input.couponId));
 
     return { counted: true };
   });

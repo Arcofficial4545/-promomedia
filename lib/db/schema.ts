@@ -1,13 +1,16 @@
 import { relations } from "drizzle-orm";
 import {
+  boolean,
   index,
   integer,
+  jsonb,
+  pgTable,
   primaryKey,
   real,
-  sqliteTable,
   text,
+  timestamp,
   uniqueIndex,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 
 /* ------------------------------------------------------------------ */
 /* Shared column helpers                                               */
@@ -18,19 +21,23 @@ const id = () =>
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID());
 
+/** Timestamptz that returns/accepts JS Date objects. */
+const ts = (name: string) =>
+  timestamp(name, { withTimezone: true, mode: "date" });
+
 const createdAt = () =>
-  integer("created_at", { mode: "timestamp_ms" })
+  ts("created_at")
     .notNull()
     .$defaultFn(() => new Date());
 
 const updatedAt = () =>
-  integer("updated_at", { mode: "timestamp_ms" })
+  ts("updated_at")
     .notNull()
     .$defaultFn(() => new Date())
     .$onUpdateFn(() => new Date());
 
 const bool = (name: string, defaultValue = false) =>
-  integer(name, { mode: "boolean" }).notNull().default(defaultValue);
+  boolean(name).notNull().default(defaultValue);
 
 /* ------------------------------------------------------------------ */
 /* JSON payload types                                                  */
@@ -130,7 +137,7 @@ export type EditorPick = {
 /* Tables                                                              */
 /* ------------------------------------------------------------------ */
 
-export const stores = sqliteTable(
+export const stores = pgTable(
   "stores",
   {
     id: id(),
@@ -155,23 +162,21 @@ export const stores = sqliteTable(
     editorialScore: real("editorial_score"),
     useItFor: text("use_it_for"),
     skipItIf: text("skip_it_if"),
-    goodPoints: text("good_points", { mode: "json" }).$type<string[]>(),
-    weakPoints: text("weak_points", { mode: "json" }).$type<string[]>(),
-    pricingSummary: text("pricing_summary", { mode: "json" }).$type<PricingRow[]>(),
+    goodPoints: jsonb("good_points").$type<string[]>(),
+    weakPoints: jsonb("weak_points").$type<string[]>(),
+    pricingSummary: jsonb("pricing_summary").$type<PricingRow[]>(),
     pricingUrl: text("pricing_url"),
-    howToRedeem: text("how_to_redeem", { mode: "json" }).$type<RedeemStep[]>(),
-    faq: text("faq", { mode: "json" }).$type<FaqItem[]>(),
-    alternativeSlugs: text("alternative_slugs", { mode: "json" }).$type<string[]>(),
-    lastReviewedAt: integer("last_reviewed_at", { mode: "timestamp_ms" }),
+    howToRedeem: jsonb("how_to_redeem").$type<RedeemStep[]>(),
+    faq: jsonb("faq").$type<FaqItem[]>(),
+    alternativeSlugs: jsonb("alternative_slugs").$type<string[]>(),
+    lastReviewedAt: ts("last_reviewed_at"),
     /* -------- Review scorecard + long-form body (v2, Section 7). --------- */
     /** 4–5 scored criteria rendered as the scorecard bars. */
-    ratingBreakdown: text("rating_breakdown", { mode: "json" }).$type<
-      RatingCriterion[]
-    >(),
+    ratingBreakdown: jsonb("rating_breakdown").$type<RatingCriterion[]>(),
     /** Long-form review body, Tiptap JSON — rendered by ArticleRenderer. */
-    reviewBody: text("review_body", { mode: "json" }).$type<TiptapDoc>(),
+    reviewBody: jsonb("review_body").$type<TiptapDoc>(),
     /** Local /public paths to screenshots for the strip. */
-    screenshots: text("screenshots", { mode: "json" }).$type<string[]>(),
+    screenshots: jsonb("screenshots").$type<string[]>(),
     coverImageUrl: text("cover_image_url"),
     /** e.g. "Free plan · paid from $16/mo". */
     startingPriceLabel: text("starting_price_label"),
@@ -188,7 +193,7 @@ export const stores = sqliteTable(
   ],
 );
 
-export const comparisons = sqliteTable(
+export const comparisons = pgTable(
   "comparisons",
   {
     id: id(),
@@ -202,7 +207,7 @@ export const comparisons = sqliteTable(
       .notNull()
       .references(() => stores.id, { onDelete: "cascade" }),
     intro: text("intro").notNull().default(""),
-    criteria: text("criteria", { mode: "json" })
+    criteria: jsonb("criteria")
       .notNull()
       .$type<ComparisonCriterion[]>()
       .default([]),
@@ -227,7 +232,7 @@ export const comparisons = sqliteTable(
   ],
 );
 
-export const categories = sqliteTable(
+export const categories = pgTable(
   "categories",
   {
     id: id(),
@@ -243,7 +248,7 @@ export const categories = sqliteTable(
   (t) => [uniqueIndex("categories_slug_idx").on(t.slug)],
 );
 
-export const storeCategories = sqliteTable(
+export const storeCategories = pgTable(
   "store_categories",
   {
     storeId: text("store_id")
@@ -259,7 +264,7 @@ export const storeCategories = sqliteTable(
   ],
 );
 
-export const coupons = sqliteTable(
+export const coupons = pgTable(
   "coupons",
   {
     id: id(),
@@ -277,8 +282,8 @@ export const coupons = sqliteTable(
     terms: text("terms").notNull().default(""),
     /** Overrides the store's affiliate/website URL when set. */
     destinationUrl: text("destination_url"),
-    startsAt: integer("starts_at", { mode: "timestamp_ms" }),
-    expiresAt: integer("expires_at", { mode: "timestamp_ms" }),
+    startsAt: ts("starts_at"),
+    expiresAt: ts("expires_at"),
     isVerified: bool("is_verified"),
     isExclusive: bool("is_exclusive"),
     isActive: bool("is_active", true),
@@ -286,7 +291,7 @@ export const coupons = sqliteTable(
     sourceType: text("source_type", { enum: ["official", "demo"] })
       .notNull()
       .default("official"),
-    lastVerifiedAt: integer("last_verified_at", { mode: "timestamp_ms" }),
+    lastVerifiedAt: ts("last_verified_at"),
     worksCount: integer("works_count").notNull().default(0),
     failsCount: integer("fails_count").notNull().default(0),
     clickCount: integer("click_count").notNull().default(0),
@@ -303,7 +308,7 @@ export const coupons = sqliteTable(
   ],
 );
 
-export const authors = sqliteTable("authors", {
+export const authors = pgTable("authors", {
   id: id(),
   name: text("name").notNull(),
   avatarUrl: text("avatar_url"),
@@ -313,26 +318,24 @@ export const authors = sqliteTable("authors", {
   updatedAt: updatedAt(),
 });
 
-export const posts = sqliteTable(
+export const posts = pgTable(
   "posts",
   {
     id: id(),
     title: text("title").notNull(),
     slug: text("slug").notNull(),
     excerpt: text("excerpt").notNull().default(""),
-    contentJson: text("content_json", { mode: "json" })
-      .notNull()
-      .$type<TiptapDoc>(),
+    contentJson: jsonb("content_json").notNull().$type<TiptapDoc>(),
     coverImageUrl: text("cover_image_url"),
     authorId: text("author_id")
       .notNull()
       .references(() => authors.id),
     categoryId: text("category_id").references(() => categories.id),
-    tags: text("tags", { mode: "json" }).notNull().$type<string[]>().default([]),
+    tags: jsonb("tags").notNull().$type<string[]>().default([]),
     status: text("status", { enum: ["draft", "published"] })
       .notNull()
       .default("draft"),
-    publishedAt: integer("published_at", { mode: "timestamp_ms" }),
+    publishedAt: ts("published_at"),
     readingMinutes: integer("reading_minutes").notNull().default(3),
     seoTitle: text("seo_title"),
     seoDescription: text("seo_description"),
@@ -348,7 +351,7 @@ export const posts = sqliteTable(
   ],
 );
 
-export const postStores = sqliteTable(
+export const postStores = pgTable(
   "post_stores",
   {
     postId: text("post_id")
@@ -364,26 +367,21 @@ export const postStores = sqliteTable(
   ],
 );
 
-export const promos = sqliteTable(
+export const promos = pgTable(
   "promos",
   {
     id: id(),
     name: text("name").notNull(),
-    placement: text("placement")
-      .notNull()
-      .$type<PromoPlacement>(),
+    placement: text("placement").notNull().$type<PromoPlacement>(),
     type: text("type").notNull().$type<PromoType>(),
-    payload: text("payload", { mode: "json" })
-      .notNull()
-      .$type<PromoPayload>()
-      .default({}),
-    targetingRules: text("targeting_rules", { mode: "json" })
+    payload: jsonb("payload").notNull().$type<PromoPayload>().default({}),
+    targetingRules: jsonb("targeting_rules")
       .notNull()
       .$type<PromoTargetingRules>()
       .default({}),
     isActive: bool("is_active", true),
-    startsAt: integer("starts_at", { mode: "timestamp_ms" }),
-    endsAt: integer("ends_at", { mode: "timestamp_ms" }),
+    startsAt: ts("starts_at"),
+    endsAt: ts("ends_at"),
     priority: integer("priority").notNull().default(0),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
@@ -394,7 +392,7 @@ export const promos = sqliteTable(
   ],
 );
 
-export const clicks = sqliteTable(
+export const clicks = pgTable(
   "clicks",
   {
     id: id(),
@@ -424,19 +422,19 @@ export const clicks = sqliteTable(
   ],
 );
 
-export const newsletterSubscribers = sqliteTable(
+export const newsletterSubscribers = pgTable(
   "newsletter_subscribers",
   {
     id: id(),
     email: text("email").notNull(),
     source: text("source").notNull().default("site"),
-    confirmedAt: integer("confirmed_at", { mode: "timestamp_ms" }),
+    confirmedAt: ts("confirmed_at"),
     createdAt: createdAt(),
   },
   (t) => [uniqueIndex("newsletter_email_idx").on(t.email)],
 );
 
-export const settings = sqliteTable("settings", {
+export const settings = pgTable("settings", {
   /** Singleton row — always `"singleton"`. */
   id: text("id").primaryKey().default("singleton"),
   siteName: text("site_name").notNull().default("Promopedia"),
@@ -458,11 +456,11 @@ export const settings = sqliteTable("settings", {
     .default(
       "When you buy through some links on Promopedia, we may earn a commission at no extra cost to you. This never influences what we cover or recommend.",
     ),
-  socialLinks: text("social_links", { mode: "json" })
+  socialLinks: jsonb("social_links")
     .notNull()
     .$type<SettingsSocialLinks>()
     .default({}),
-  popupRules: text("popup_rules", { mode: "json" })
+  popupRules: jsonb("popup_rules")
     .notNull()
     .$type<SettingsPopupRules>()
     .default({
@@ -471,14 +469,14 @@ export const settings = sqliteTable("settings", {
       defaultDelayMs: 12_000,
     }),
   /** Editor's-pick slots on the reviews hub, e.g. "Best overall". */
-  editorPicks: text("editor_picks", { mode: "json" })
+  editorPicks: jsonb("editor_picks")
     .notNull()
     .$type<EditorPick[]>()
     .default([]),
   updatedAt: updatedAt(),
 });
 
-export const codeFeedback = sqliteTable(
+export const codeFeedback = pgTable(
   "code_feedback",
   {
     id: id(),
@@ -496,7 +494,7 @@ export const codeFeedback = sqliteTable(
   ],
 );
 
-export const contactMessages = sqliteTable(
+export const contactMessages = pgTable(
   "contact_messages",
   {
     id: id(),
@@ -509,7 +507,7 @@ export const contactMessages = sqliteTable(
   (t) => [index("contact_messages_created_idx").on(t.createdAt)],
 );
 
-export const adminUsers = sqliteTable(
+export const adminUsers = pgTable(
   "admin_users",
   {
     id: id(),

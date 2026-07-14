@@ -18,15 +18,16 @@ export async function countClicksSince(since: Date): Promise<number> {
 export async function clicksPerDay(
   since: Date,
 ): Promise<{ day: string; clicks: number }[]> {
+  const day = sql<string>`to_char(${clicks.createdAt}, 'YYYY-MM-DD')`;
   const rows = await db
     .select({
-      day: sql<string>`date(${clicks.createdAt} / 1000, 'unixepoch')`,
+      day,
       clicks: count(),
     })
     .from(clicks)
     .where(gte(clicks.createdAt, since))
-    .groupBy(sql`date(${clicks.createdAt} / 1000, 'unixepoch')`)
-    .orderBy(sql`date(${clicks.createdAt} / 1000, 'unixepoch')`);
+    .groupBy(day)
+    .orderBy(day);
   return rows;
 }
 

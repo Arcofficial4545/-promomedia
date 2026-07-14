@@ -1,40 +1,12 @@
 {
   "version": "7",
-  "dialect": "sqlite",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "6",
-      "when": 1783120275616,
-      "tag": "0000_init",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1783121706240,
-      "tag": "0001_contact-messages",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1783450770894,
-      "tag": "0002_v2-company-pages",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1783897370921,
-      "tag": "0003_watery_vision",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1783898250440,
-      "tag": "0004_wandering_sasquatch",
+      "version": "7",
+      "when": 1783989647014,
+      "tag": "0000_lean_jetstream",
       "breakpoints": true
     }
   ]
