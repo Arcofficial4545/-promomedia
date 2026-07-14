@@ -191,20 +191,19 @@ export function PopupManager({ timedPromo, exitPromo, rules }: PopupManagerProps
             }
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="overflow-hidden rounded-[var(--radius-card)] bg-white shadow-lg">
-              <div className="flex items-center justify-end p-2 pb-0">
-                <button
-                  type="button"
-                  onClick={close}
-                  aria-label="Close"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-btn)] text-ink-muted transition-colors hover:bg-mint hover:text-pine"
-                >
-                  <X className="h-5 w-5" aria-hidden="true" />
-                </button>
-              </div>
-              <div className="p-4 pt-0">
-                <PromoCard promo={openPromo} variant="card" className="border-0 bg-white p-2" />
-              </div>
+            {/* Close floats over the card so each promo keeps its own
+                background (pine newsletter, mint deal) and its text stays
+                readable. The white chip is visible on light and dark cards. */}
+            <button
+              type="button"
+              onClick={close}
+              aria-label="Close"
+              className="absolute top-3 right-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-ink-muted shadow-sm transition-colors hover:text-pine"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <div className="overflow-hidden rounded-[var(--radius-card)] shadow-lg">
+              <PromoCard promo={openPromo} variant="card" className="border-0" />
             </div>
           </motion.div>
         </motion.div>
