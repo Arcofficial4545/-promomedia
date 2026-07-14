@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -13,6 +13,16 @@ import { useMediaQuery } from "@/components/motion/useMediaQuery";
 import { HeroGridCanvas } from "./HeroGridCanvas";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/** Fisher–Yates shuffle over a copy — never mutate the source array. */
+function shuffle<T>(items: readonly T[]): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
 
 export type HeroCard = {
   name: string;
@@ -163,12 +173,22 @@ export function Hero({ cards, vsChips, quickTags }: HeroProps) {
     { scope, dependencies: [reducedMotion, isTouch, lenis] },
   );
 
+  // Rotate the floating chips per visit in the browser: SSR renders a stable
+  // first slice (no hydration mismatch), then we reshuffle on mount so the
+  // cached page still looks different on every refresh — with no DB hit.
+  const [pickedCards, setPickedCards] = useState(() => cards.slice(0, 2));
+  const [pickedVs, setPickedVs] = useState(() => vsChips.slice(0, 2));
+  useEffect(() => {
+    setPickedCards(shuffle(cards).slice(0, 2));
+    setPickedVs(shuffle(vsChips).slice(0, 2));
+  }, [cards, vsChips]);
+
   // Interleave score chips and VS chips, then drop into the fixed slots.
   const floatItems: React.ReactNode[] = [];
-  const maxLen = Math.max(cards.length, vsChips.length);
+  const maxLen = Math.max(pickedCards.length, pickedVs.length);
   for (let i = 0; i < maxLen; i++) {
-    if (cards[i]) floatItems.push(<HeroScoreChip card={cards[i]} />);
-    if (vsChips[i]) floatItems.push(<HeroVsChip vs={vsChips[i]} />);
+    if (pickedCards[i]) floatItems.push(<HeroScoreChip card={pickedCards[i]} />);
+    if (pickedVs[i]) floatItems.push(<HeroVsChip vs={pickedVs[i]} />);
   }
   const floats = floatItems.slice(0, FLOAT_SLOTS.length);
 

@@ -1,19 +1,23 @@
 import Link from "next/link";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { CouponGrid } from "@/components/coupon/CouponGrid";
 import { toTicketCoupon } from "@/components/coupon/toTicketCoupon";
-import { StoreLogo } from "@/components/coupon/StoreLogo";
 import { CategoryIcon } from "@/components/marketing/CategoryIcon";
 import { Hero } from "@/components/marketing/hero/Hero";
 import { LogoMarquee } from "@/components/marketing/LogoMarquee";
 import { NewsletterForm } from "@/components/marketing/NewsletterForm";
-import { ScoreBadge } from "@/components/marketing/company/ScoreBadge";
-import { StarRating } from "@/components/marketing/StarRating";
+import {
+  FeaturedComparison,
+  type Matchup,
+} from "@/components/marketing/home/FeaturedComparison";
+import {
+  RotatingReviews,
+  type ReviewItem,
+} from "@/components/marketing/home/RotatingReviews";
 import { Reveal } from "@/components/motion/Reveal";
 import { PromoSlot } from "@/components/promo/PromoSlot";
 import { listPublishedComparisons } from "@/lib/db/repositories/comparisons";
@@ -26,19 +30,10 @@ import { listPublishedPosts } from "@/lib/db/repositories/posts";
 import { listReviewedStores } from "@/lib/db/repositories/stores";
 import { formatDate } from "@/lib/utils";
 
-// Rendered per request so the "Latest reviews" spotlight rotates on every
-// visit instead of serving a cached, identical selection.
-export const dynamic = "force-dynamic";
-
-/** Fisher–Yates shuffle over a copy — never mutate the source array. */
-function shuffle<T>(items: readonly T[]): T[] {
-  const out = [...items];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-}
+// Cached (ISR): the DB is queried at most once per window, so the page is fast.
+// Per-visit rotation of the hero chips, head-to-head band, and reviews happens
+// client-side in the browser — no database hit on each load.
+export const revalidate = 3600;
 
 /** Kicker + left-aligned title, with an optional trailing link. */
 function SectionHead({
@@ -94,36 +89,50 @@ export default async function HomePage() {
     listPublishedComparisons(),
   ]);
 
-  // Everything below rotates on each visit (the page is force-dynamic), so the
-  // hero chips and the head-to-head band never look static on refresh.
-  const shuffledComparisons = shuffle(comparisons);
-  const featuredComparison = shuffledComparisons[0] ?? null;
+  // Slim data pools handed to the client components, which pick their random
+  // selection on mount (keeps the page cacheable and the payload small).
+  const reviewItems: ReviewItem[] = reviewedStores.map((s) => ({
+    id: s.id,
+    slug: s.slug,
+    name: s.name,
+    categoryName: s.categories[0]?.name ?? null,
+    logoUrl: s.logoUrl,
+    themeColor: s.themeColor,
+    editorialScore: s.editorialScore,
+    verdict: s.verdict,
+    updatedLabel: s.lastReviewedAt ? formatDate(s.lastReviewedAt) : null,
+  }));
 
-  // Rotate which three reviews get the home spotlight on each visit.
-  const topReviews = shuffle(reviewedStores).slice(0, 3);
-  // Floating score chips: a random three of the scored tools.
-  const heroCards = shuffle(
-    reviewedStores.filter((s) => s.editorialScore !== null),
-  )
-    .slice(0, 3)
+  const matchups: Matchup[] = comparisons.map((c) => ({
+    title: c.title,
+    subtitle: c.subtitle,
+    slug: c.slug,
+    storeAName: c.storeA.name,
+    storeBName: c.storeB.name,
+    criteria: c.criteria.map((r) => ({ label: r.label, winner: r.winner })),
+  }));
+
+  // Floating hero chips: full pools; the Hero shuffles + slices in the browser.
+  const heroCards = reviewedStores
+    .filter((s) => s.editorialScore !== null)
     .map((s) => ({
       name: s.name,
       score: s.editorialScore as number,
       logoUrl: s.logoUrl,
     }));
-  // Floating VS chips: two matchups other than the one in the featured band.
-  const heroVsChips = shuffledComparisons.slice(1, 3).map((c) => ({
+  const heroVsChips = comparisons.map((c) => ({
     a: c.storeA.name,
     b: c.storeB.name,
     slug: c.slug,
   }));
-  // Quick tags: the featured matchup + top categories, all real deep links.
+
+  // Quick tags stay deterministic (a fast path in, no need to rotate).
   const quickTags = [
-    ...(featuredComparison
+    ...(comparisons[0]
       ? [
           {
-            label: featuredComparison.title,
-            href: `/compare/${featuredComparison.slug}`,
+            label: comparisons[0].title,
+            href: `/compare/${comparisons[0].slug}`,
           },
         ]
       : []),
@@ -155,7 +164,7 @@ export default async function HomePage() {
       </Container>
 
       {/* ============================================= Latest reviews (rows) */}
-      {topReviews.length > 0 && (
+      {reviewItems.length > 0 && (
         <Section>
           <Container size="wide">
             <Reveal>
@@ -167,123 +176,13 @@ export default async function HomePage() {
                 linkLabel="All reviews"
               />
             </Reveal>
-            <ul className="mt-8 divide-y divide-line border-y border-line">
-              {topReviews.map((store, i) => (
-                <Reveal as="li" key={store.id} delay={Math.min(i, 2) * 0.06}>
-                  <Link
-                    href={`/tools/${store.slug}`}
-                    className="group flex items-center gap-4 py-5 transition-colors hover:bg-mint/40 sm:gap-5"
-                  >
-                    <StoreLogo
-                      name={store.name}
-                      logoUrl={store.logoUrl}
-                      themeColor={store.themeColor}
-                      size="md"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <span className="font-display text-lg font-semibold text-ink group-hover:text-pine">
-                          {store.name}
-                        </span>
-                        {store.categories[0] && (
-                          <Badge>{store.categories[0].name}</Badge>
-                        )}
-                      </div>
-                      {store.editorialScore !== null && (
-                        <StarRating
-                          score={store.editorialScore}
-                          size="sm"
-                          className="mt-1.5"
-                        />
-                      )}
-                      {store.verdict && (
-                        <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-ink-muted">
-                          {store.verdict}
-                        </p>
-                      )}
-                      {store.lastReviewedAt && (
-                        <p className="mt-1.5 font-mono text-xs text-ink-subtle">
-                          Updated {formatDate(store.lastReviewedAt)}
-                        </p>
-                      )}
-                    </div>
-                    {store.editorialScore !== null && (
-                      <ScoreBadge score={store.editorialScore} />
-                    )}
-                    <ArrowRight
-                      className="hidden h-4 w-4 shrink-0 text-ink-subtle transition-transform group-hover:translate-x-0.5 group-hover:text-pine sm:block"
-                      aria-hidden="true"
-                    />
-                  </Link>
-                </Reveal>
-              ))}
-            </ul>
+            <RotatingReviews reviews={reviewItems} />
           </Container>
         </Section>
       )}
 
       {/* ==================================== Featured comparison (pine band) */}
-      {featuredComparison && (
-        <Section tone="pine">
-          <Container size="wide">
-            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-              <div>
-                <p className="font-mono text-xs font-semibold tracking-[0.2em] text-mint/70 uppercase">
-                  Head-to-head
-                </p>
-                <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                  {featuredComparison.title}
-                </h2>
-                <p className="mt-3 max-w-md text-body-lg text-mint/85">
-                  {featuredComparison.subtitle}
-                </p>
-                <Link
-                  href={`/compare/${featuredComparison.slug}`}
-                  className="btn-gloss btn-primary press-down mt-6 inline-flex h-11 items-center gap-2 rounded-[var(--radius-btn)] px-6 text-sm font-semibold"
-                >
-                  See the full comparison
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </div>
-
-              {/* Mini table preview */}
-              <div className="overflow-hidden rounded-[var(--radius-card)] border border-white/15 bg-white/[0.04]">
-                <div className="grid grid-cols-[1fr_auto_auto] gap-x-4 border-b border-white/10 px-5 py-3 font-mono text-xs tracking-wider text-mint/60 uppercase">
-                  <span>Criterion</span>
-                  <span className="text-center">
-                    {featuredComparison.storeA.name}
-                  </span>
-                  <span className="text-center">
-                    {featuredComparison.storeB.name}
-                  </span>
-                </div>
-                {featuredComparison.criteria.slice(0, 4).map((row, i) => (
-                  <div
-                    key={i}
-                    className="grid grid-cols-[1fr_auto_auto] items-center gap-x-4 border-b border-white/10 px-5 py-3 text-sm text-white/85 last:border-0"
-                  >
-                    <span>{row.label}</span>
-                    <span className="w-16 text-center">
-                      {row.winner === "a" ? (
-                        <span className="font-semibold text-emerald">Wins</span>
-                      ) : (
-                        <span className="text-white/30">—</span>
-                      )}
-                    </span>
-                    <span className="w-16 text-center">
-                      {row.winner === "b" ? (
-                        <span className="font-semibold text-emerald">Wins</span>
-                      ) : (
-                        <span className="text-white/30">—</span>
-                      )}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Container>
-        </Section>
-      )}
+      <FeaturedComparison matchups={matchups} />
 
       {/* ------------------------------------------- Browse by category (rows) */}
       <Section>
