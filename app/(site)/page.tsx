@@ -249,7 +249,7 @@ export default async function HomePage() {
             <Reveal>
               <SectionHead
                 kicker="From the blog"
-                title="HAVE A LOOK AT OUR LATEST ARTICLES"
+                title="Have a look at our latest articles"
                 href="/blog"
                 linkLabel="All articles"
               />
