@@ -8,10 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx scripts/migrate.ts",
-    "db:seed": "tsx scripts/seed.ts",
-    "db:reset": "tsx scripts/migrate.ts && tsx scripts/seed.ts",
-    "assets:fetch": "tsx scripts/fetch-brand-assets.ts"
+    "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
+    "db:seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
+    "db:reset": "npm run db:migrate && npm run db:seed",
+    "assets:fetch": "tsx --env-file-if-exists=.env.local scripts/fetch-brand-assets.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
