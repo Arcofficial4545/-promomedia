@@ -13,8 +13,8 @@ export async function recordCodeVote(input: {
   worked: boolean;
   visitorHash: string;
 }): Promise<{ counted: boolean }> {
-  return db.transaction((tx) => {
-    const existing = tx
+  return db.transaction(async (tx) => {
+    const existing = await tx
       .select({ id: codeFeedback.id })
       .from(codeFeedback)
       .where(
@@ -26,7 +26,8 @@ export async function recordCodeVote(input: {
       .get();
     if (existing) return { counted: false };
 
-    tx.insert(codeFeedback)
+    await tx
+      .insert(codeFeedback)
       .values({
         couponId: input.couponId,
         worked: input.worked,
@@ -34,7 +35,8 @@ export async function recordCodeVote(input: {
       })
       .run();
 
-    tx.update(coupons)
+    await tx
+      .update(coupons)
       .set(
         input.worked
           ? { worksCount: sql`${coupons.worksCount} + 1` }

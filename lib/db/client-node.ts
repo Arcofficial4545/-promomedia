@@ -1,27 +1,37 @@
 /**
- * Node-only Drizzle client over local SQLite (better-sqlite3).
+ * Drizzle client over libSQL. Works in two modes from one driver:
+ *  - Local dev / CLI scripts: a `file:` URL points at the on-disk SQLite file.
+ *  - Production (Vercel + Turso): a `libsql://` URL + auth token talks to the
+ *    hosted database over HTTP, which is what serverless needs.
  *
- * App code must import `lib/db/client` (which adds the `server-only` guard);
- * this module exists so CLI scripts (seed, migrate) can reuse the same
- * connection logic outside the Next.js runtime.
+ * App code imports `lib/db/client` (adds the `server-only` guard); this module
+ * exists so CLI scripts (seed, migrate) can reuse the same connection.
  *
- * Swapping to Supabase Postgres later only changes this file + drizzle
- * config — see DATA_LAYER.md.
+ * Env:
+ *  - DATABASE_URL         file:./data/promopedia.db (local) or libsql://... (Turso)
+ *  - DATABASE_AUTH_TOKEN  required for a remote libsql:// URL, unset locally
  */
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
+import { createClient, type Config } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
 import fs from "node:fs";
 import path from "node:path";
 import * as schema from "./schema";
 
-function resolveDbPath(): string {
+function resolveConfig(): Config {
   const url = process.env.DATABASE_URL ?? "file:./data/promopedia.db";
-  const filePath = url.startsWith("file:") ? url.slice(5) : url;
+
+  // Remote libSQL (Turso) — production/serverless.
+  if (!url.startsWith("file:")) {
+    return { url, authToken: process.env.DATABASE_AUTH_TOKEN };
+  }
+
+  // Local SQLite file — make the path absolute and ensure the folder exists.
+  const filePath = url.slice("file:".length);
   const absolute = path.isAbsolute(filePath)
     ? filePath
-    : path.join(/*turbopackIgnore: true*/ process.cwd(), filePath);
+    : path.join(process.cwd(), filePath);
   fs.mkdirSync(path.dirname(absolute), { recursive: true });
-  return absolute;
+  return { url: `file:${absolute}` };
 }
 
 declare global {
@@ -29,10 +39,8 @@ declare global {
 }
 
 function createDb() {
-  const sqlite = new Database(resolveDbPath());
-  sqlite.pragma("journal_mode = WAL");
-  sqlite.pragma("foreign_keys = ON");
-  return drizzle(sqlite, { schema });
+  const client = createClient(resolveConfig());
+  return drizzle(client, { schema });
 }
 
 /** Singleton across dev HMR reloads. */
