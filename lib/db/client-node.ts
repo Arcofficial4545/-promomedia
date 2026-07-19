@@ -26,14 +26,22 @@ function createClient() {
   }
   // Use Supabase's SESSION pooler (port 5432), not the transaction pooler
   // (6543): postgres.js pipelines concurrent queries onto a connection, which
-  // pgBouncer's transaction mode cannot serve — it deadlocks, so any page
-  // firing parallel queries hangs forever. Session mode handles concurrency
-  // fine (24 concurrent ≈ 1.6s measured).
-  // `prepare: false` is harmless here and keeps us portable if the URL is ever
-  // pointed back at the transaction pooler.
+  // pgBouncer's transaction mode cannot serve — it deadlocks. Session mode
+  // handles pipelined concurrency fine on a held connection.
+  //
+  // Connections: 1 in production so each serverless function instance holds a
+  // single session connection and they don't exhaust the small pooler under
+  // load (which caused 500s when navigating between pages); a few more in
+  // local dev for parallelism. `connect_timeout` fails fast instead of hanging.
+  const max = process.env.NODE_ENV === "production" ? 1 : 5;
   const sql =
     globalThis.__promopediaSql ??
-    postgres(url, { prepare: false, max: 5, idle_timeout: 20 });
+    postgres(url, {
+      prepare: false,
+      max,
+      idle_timeout: 20,
+      connect_timeout: 15,
+    });
   globalThis.__promopediaSql = sql;
   return drizzle(sql, { schema });
 }
