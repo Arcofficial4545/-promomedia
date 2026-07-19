@@ -176,11 +176,17 @@ export function Hero({ cards, vsChips, quickTags }: HeroProps) {
   // Rotate the floating chips per visit in the browser: SSR renders a stable
   // first slice (no hydration mismatch), then we reshuffle on mount so the
   // cached page still looks different on every refresh — with no DB hit.
+  // The first entry is the pinned flagship (Lovable card / Lovable-vs-Cursor
+  // chip): always shown. The remaining slot rotates on each visit.
   const [pickedCards, setPickedCards] = useState(() => cards.slice(0, 2));
   const [pickedVs, setPickedVs] = useState(() => vsChips.slice(0, 2));
   useEffect(() => {
-    setPickedCards(shuffle(cards).slice(0, 2));
-    setPickedVs(shuffle(vsChips).slice(0, 2));
+    const pin = <T,>(items: T[], n: number) =>
+      items.length <= 1
+        ? items.slice(0, n)
+        : [items[0], ...shuffle(items.slice(1)).slice(0, n - 1)];
+    setPickedCards(pin(cards, 2));
+    setPickedVs(pin(vsChips, 2));
   }, [cards, vsChips]);
 
   // Interleave score chips and VS chips, then drop into the fixed slots.

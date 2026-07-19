@@ -12,7 +12,6 @@ import { StoreCard } from "@/components/marketing/StoreCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getCategoryBySlug,
-  listAllCategorySlugs,
 } from "@/lib/db/repositories/categories";
 import { listActiveCoupons } from "@/lib/db/repositories/coupons";
 import { listActiveStores } from "@/lib/db/repositories/stores";
@@ -20,9 +19,10 @@ import { breadcrumbLd, ogImageUrl } from "@/lib/seo/jsonld";
 
 export const revalidate = 300;
 
+// Rendered on-demand, then cached via `revalidate` (v3-01).
+export const dynamicParams = true;
 export async function generateStaticParams() {
-  const slugs = await listAllCategorySlugs();
-  return slugs.map((slug) => ({ slug }));
+  return [];
 }
 
 export async function generateMetadata({
@@ -59,6 +59,15 @@ export default async function CategoryPage({
     listActiveCoupons({ categorySlug: slug, limit: 10 }),
   ]);
 
+  // Show at most one deal per brand in the category grid so no single tool
+  // (e.g. Lovable, which carries several deals) floods the top of the page.
+  const seenStores = new Set<string>();
+  const topDeals = coupons.filter((c) => {
+    if (seenStores.has(c.storeId)) return false;
+    seenStores.add(c.storeId);
+    return true;
+  });
+
   return (
     <>
       <JsonLd
@@ -83,13 +92,13 @@ export default async function CategoryPage({
           <h2 className="text-h3 font-bold text-pine">
             Top {category.name} deals
           </h2>
-          {coupons.length === 0 ? (
+          {topDeals.length === 0 ? (
             <p className="mt-4 text-ink-muted">
               No active deals in this category right now — check back soon.
             </p>
           ) : (
             <CouponGrid
-              coupons={coupons.map(toTicketCoupon)}
+              coupons={topDeals.map(toTicketCoupon)}
               className="mt-6"
             />
           )}

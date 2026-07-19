@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
@@ -16,20 +13,13 @@ export type Matchup = {
 };
 
 /**
- * Head-to-head band that rotates its matchup on every visit. The page is
- * cached, so the server renders the first matchup (stable, SEO-visible) and the
- * browser swaps in a random one on mount — no per-request database hit.
+ * The single pine "head-to-head" statement section. It always shows the
+ * flagship matchup (the `isFeatured` comparison, i.e. Lovable vs Cursor) so the
+ * flagship placement is guaranteed on every visit — the prominence is by
+ * position, not by special styling. Server-rendered and SEO-visible.
  */
-export function FeaturedComparison({ matchups }: { matchups: Matchup[] }) {
-  const [featured, setFeatured] = useState<Matchup | null>(
-    () => matchups[0] ?? null,
-  );
-
-  useEffect(() => {
-    if (matchups.length === 0) return;
-    setFeatured(matchups[Math.floor(Math.random() * matchups.length)]);
-  }, [matchups]);
-
+export function FeaturedComparison({ matchup }: { matchup: Matchup | null }) {
+  const featured = matchup;
   if (!featured) return null;
 
   return (

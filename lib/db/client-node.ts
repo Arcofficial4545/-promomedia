@@ -24,9 +24,16 @@ function createClient() {
       "DATABASE_URL is not set. Point it at your Supabase Postgres connection string.",
     );
   }
-  // `prepare: false` keeps us compatible with Supabase's transaction pooler
-  // (pgBouncer), which does not support prepared statements.
-  const sql = globalThis.__promopediaSql ?? postgres(url, { prepare: false });
+  // Use Supabase's SESSION pooler (port 5432), not the transaction pooler
+  // (6543): postgres.js pipelines concurrent queries onto a connection, which
+  // pgBouncer's transaction mode cannot serve — it deadlocks, so any page
+  // firing parallel queries hangs forever. Session mode handles concurrency
+  // fine (24 concurrent ≈ 1.6s measured).
+  // `prepare: false` is harmless here and keeps us portable if the URL is ever
+  // pointed back at the transaction pooler.
+  const sql =
+    globalThis.__promopediaSql ??
+    postgres(url, { prepare: false, max: 5, idle_timeout: 20 });
   globalThis.__promopediaSql = sql;
   return drizzle(sql, { schema });
 }

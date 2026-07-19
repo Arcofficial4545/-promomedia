@@ -24,7 +24,6 @@ import {
 } from "@/lib/db/repositories/coupons";
 import {
   getPublishedPostBySlug,
-  listAllPublishedPostSlugs,
   listRelatedStoreIds,
 } from "@/lib/db/repositories/posts";
 import { articleLd, breadcrumbLd, ogImageUrl, SITE_URL } from "@/lib/seo/jsonld";
@@ -32,9 +31,10 @@ import { formatDate } from "@/lib/utils";
 
 export const revalidate = 300;
 
+// Rendered on-demand, then cached via `revalidate` (v3-01).
+export const dynamicParams = true;
 export async function generateStaticParams() {
-  const slugs = await listAllPublishedPostSlugs();
-  return slugs.map((slug) => ({ slug }));
+  return [];
 }
 
 export async function generateMetadata({

@@ -8,7 +8,6 @@ import { Pagination } from "@/components/marketing/Pagination";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getCategoryBySlug,
-  listAllCategorySlugs,
 } from "@/lib/db/repositories/categories";
 import { listPublishedPosts } from "@/lib/db/repositories/posts";
 import { breadcrumbLd } from "@/lib/seo/jsonld";
@@ -17,9 +16,10 @@ const PAGE_SIZE = 9;
 
 export const revalidate = 300;
 
+// Rendered on-demand, then cached via `revalidate` (v3-01).
+export const dynamicParams = true;
 export async function generateStaticParams() {
-  const slugs = await listAllCategorySlugs();
-  return slugs.map((slug) => ({ slug }));
+  return [];
 }
 
 export async function generateMetadata({

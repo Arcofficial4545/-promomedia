@@ -13,7 +13,6 @@ import { DisclosureLine } from "@/components/marketing/DisclosureLine";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getComparisonBySlug,
-  listPublishedComparisonSlugs,
 } from "@/lib/db/repositories/comparisons";
 import { listCouponsForStore } from "@/lib/db/repositories/coupons";
 import type { StoreWithMeta } from "@/lib/db/repositories/stores";
@@ -23,9 +22,9 @@ import { formatDate } from "@/lib/utils";
 export const revalidate = 300;
 export const dynamicParams = true;
 
+// Rendered on-demand, then cached via `revalidate` (v3-01).
 export async function generateStaticParams() {
-  const slugs = await listPublishedComparisonSlugs();
-  return slugs.map((slug) => ({ slug }));
+  return [];
 }
 
 export async function generateMetadata({

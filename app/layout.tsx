@@ -41,8 +41,14 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      {/* suppressHydrationWarning: browser extensions commonly inject
+          attributes onto <html>/<body> before hydration; this silences the
+          resulting attribute-only mismatch without affecting real content. */}
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

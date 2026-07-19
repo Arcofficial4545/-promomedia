@@ -54,3 +54,7 @@ next-env.d.ts
 
 # local Claude Code files (machine-specific)
 /.claude/
+
+# internal strategy/tracking docs (kept local, not published)
+/PROGRESS.md
+/DECISIONS.md

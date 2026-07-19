@@ -28,7 +28,6 @@ import {
   getStoreBySlug,
   getStoresBySlugs,
   hasCompleteReview,
-  listAllStoreSlugs,
 } from "@/lib/db/repositories/stores";
 import {
   breadcrumbLd,
@@ -43,9 +42,10 @@ import { formatDate } from "@/lib/utils";
 export const revalidate = 300;
 export const dynamicParams = true;
 
+// Rendered on-demand, then cached via `revalidate` (v3-01) — keeps the build
+// from querying the DB for every page as the roster grows.
 export async function generateStaticParams() {
-  const slugs = await listAllStoreSlugs();
-  return slugs.map((slug) => ({ slug }));
+  return [];
 }
 
 export async function generateMetadata({

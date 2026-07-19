@@ -118,13 +118,14 @@ async function wipe() {
 
 const categorySeed = [
   { name: "AI Tools", slug: "ai-tools", icon: "bot", description: "Assistants, generators, and AI-first products that actually ship value.", sortOrder: 1 },
-  { name: "No-Code / App Builders", slug: "no-code-app-builders", icon: "blocks", description: "Build and launch software without writing every line yourself.", sortOrder: 2 },
-  { name: "SaaS", slug: "saas", icon: "cloud", description: "Software subscriptions worth paying for — and paying less for.", sortOrder: 3 },
-  { name: "Accounting & Finance", slug: "accounting-finance", icon: "calculator", description: "Bookkeeping, invoicing, and finance stacks for small teams.", sortOrder: 4 },
-  { name: "E-commerce", slug: "e-commerce", icon: "shopping-cart", description: "Storefronts, marketplaces, and the tools that power online selling.", sortOrder: 5 },
-  { name: "Design", slug: "design", icon: "pen-tool", description: "Design, prototyping, and creative tooling for modern teams.", sortOrder: 6 },
-  { name: "Productivity", slug: "productivity", icon: "list-checks", description: "Docs, tasks, and workflow tools that keep teams moving.", sortOrder: 7 },
-  { name: "Marketing", slug: "marketing", icon: "megaphone", description: "Copy, campaigns, SEO, and growth tooling.", sortOrder: 8 },
+  { name: "AI IDEs & Coding Agents", slug: "ai-ides-coding-agents", icon: "terminal", description: "AI-native code editors and autonomous coding agents built for developers.", sortOrder: 2 },
+  { name: "No-Code / App Builders", slug: "no-code-app-builders", icon: "blocks", description: "Build and launch software without writing every line yourself.", sortOrder: 3 },
+  { name: "SaaS", slug: "saas", icon: "cloud", description: "Software subscriptions worth paying for — and paying less for.", sortOrder: 4 },
+  { name: "Accounting & Finance", slug: "accounting-finance", icon: "calculator", description: "Bookkeeping, invoicing, and finance stacks for small teams.", sortOrder: 5 },
+  { name: "E-commerce", slug: "e-commerce", icon: "shopping-cart", description: "Storefronts, marketplaces, and the tools that power online selling.", sortOrder: 6 },
+  { name: "Design", slug: "design", icon: "pen-tool", description: "Design, prototyping, and creative tooling for modern teams.", sortOrder: 7 },
+  { name: "Productivity", slug: "productivity", icon: "list-checks", description: "Docs, tasks, and workflow tools that keep teams moving.", sortOrder: 8 },
+  { name: "Marketing", slug: "marketing", icon: "megaphone", description: "Copy, campaigns, SEO, and growth tooling.", sortOrder: 9 },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -172,7 +173,6 @@ const storeSeed: StoreSeed[] = [
       "Base44 is an AI app-building platform, operated by Wix, that turns plain-language prompts into working web applications with a built-in database, user authentication, and hosting. It targets founders and operators who want functional software without hiring engineers.",
     websiteUrl: "https://base44.com",
     rating: 4.5,
-    isFeatured: true,
     cats: ["ai-tools", "no-code-app-builders"],
     heroSummary:
       "Base44 is an AI app builder operated by Wix: you describe the product you want in plain language and it assembles a working web app — database, user accounts, and hosting included — that you refine through further prompts. It suits non-technical founders, operators building internal tools, and anyone validating an idea before committing engineering budget.",
@@ -219,7 +219,7 @@ const storeSeed: StoreSeed[] = [
     websiteUrl: "https://lovable.dev",
     rating: 4.6,
     isFeatured: true,
-    cats: ["ai-tools", "no-code-app-builders"],
+    cats: ["ai-tools", "no-code-app-builders", "ai-ides-coding-agents"],
     heroSummary:
       "Lovable is an AI app builder that writes real React front ends and Supabase back ends from a chat conversation. Unlike fully managed builders, its output is a standard codebase you can connect to GitHub and develop like any other project — which makes it the AI builder engineers object to least.",
     verdict:
@@ -241,8 +241,8 @@ const storeSeed: StoreSeed[] = [
       "Complex, unusual product logic can send the AI in circles — human review remains mandatory.",
     ],
     pricingSummary: [
-      { plan: "Free", price: "No card required", note: "Daily message limits; public projects. Fine for evaluating output quality." },
-      { plan: "Pro tiers", price: "Monthly, message-metered", note: "Paid tiers raise message allowances and unlock private projects; annual billing discounts apply." },
+      { plan: "Free", price: "No card required", note: "5 build credits/day (up to 30/mo) plus 20 monthly Cloud credits; public projects. Verified July 2026." },
+      { plan: "Pro / Business", price: "Monthly, credit-metered", note: "Adds a monthly credit balance on top of the daily build + Cloud grants; heavy iteration consumes credits. Confirm the live tiers and prices on the official page. Verified July 2026." },
     ],
     pricingUrl: "https://lovable.dev/pricing",
     howToRedeem: defaultRedeem,
@@ -862,6 +862,302 @@ const storeSeed: StoreSeed[] = [
     ],
     alternativeSlugs: ["notion", "zapier"],
   },
+
+  /* ============ v3 — AI IDEs & Coding Agents (new category) ========== */
+  {
+    name: "Cursor",
+    slug: "cursor",
+    tagline: "The AI-native code editor developers live in.",
+    description:
+      "Cursor is an AI-first code editor built on VS Code, with codebase-aware chat, fast multi-line autocomplete, and an agent mode that plans and edits across files. It is aimed at professional developers who want AI embedded in a real editor, not bolted on beside it.",
+    websiteUrl: "https://cursor.com",
+    rating: 4.5,
+    cats: ["ai-ides-coding-agents", "ai-tools"],
+    heroSummary:
+      "Cursor is an AI-first code editor built as a fork of VS Code, so it keeps the extensions, keybindings, and workflow developers already know while wrapping the whole codebase in AI: predictive multi-line edits, a chat that reads your repository, and an agent that plans and applies changes across files. It is built for people who already write code and want the AI to move at their speed.",
+    verdict:
+      "The strongest AI coding environment for people who already write software — fast, deeply integrated, and genuinely useful on real codebases rather than toy demos. The catch: it assumes real development skill, and the heaviest models run on usage-based billing that can climb if you lean on them all day. It is the wrong tool for a non-developer trying to ship an app from a prompt — that reader is far better served by an app builder like Lovable.",
+    editorialScore: 9.0,
+    useItFor:
+      "Professional and hobbyist developers who want a fast, agentic AI editor working inside a real codebase they own.",
+    skipItIf:
+      "You can't write code and want to go from idea to a deployed product without touching a repo — an AI app builder (see Lovable) fits you far better.",
+    goodPoints: [
+      "Built on VS Code, so your extensions, themes, and muscle memory carry over on day one.",
+      "Codebase-aware chat and agent mode make multi-file edits that actually respect your project's context.",
+      "Tab completion is fast and predicts the next edit, not just the next token — the feature developers miss most when they leave.",
+      "Access to frontier models plus MCP, rules, and hooks for teams that want to shape how the AI behaves.",
+    ],
+    weakPoints: [
+      "Assumes you can read and steer code; non-developers will be lost.",
+      "Usage-based billing on the strongest models means heavy days can cost more than the flat subscription suggests.",
+      "As an editor, it stops at the repo — it doesn't provision a backend or host your app the way an app builder does.",
+    ],
+    pricingSummary: [
+      { plan: "Hobby", price: "Free", note: "No card; limited Agent requests and Tab completions. Pricing verified 2026-07." },
+      { plan: "Pro", price: "$16 / month", note: "Extended Agent limits, frontier models, cloud agents, MCPs; heaviest models on usage-based billing. Verified 2026-07." },
+      { plan: "Teams", price: "$32 / user / month", note: "Central billing, SSO, agentic code review (Bugbot), analytics. Verified 2026-07." },
+    ],
+    pricingUrl: "https://cursor.com/pricing",
+    howToRedeem: defaultRedeem,
+    faq: [
+      { q: "Is Cursor free?", a: "There's a free Hobby plan with limited Agent requests and Tab completions — enough to try it. Pro is $16/month for extended limits and frontier models (verified July 2026 on the official pricing page)." },
+      { q: "Do I need to know how to code?", a: "Yes. Cursor is an editor for developers; it accelerates people who can already read and steer code. If you can't code and want to ship an app, an app builder like Lovable is the better fit." },
+      { q: "Cursor or GitHub Copilot?", a: "Copilot is the incumbent that lives inside many IDEs; Cursor is a dedicated AI editor with a tighter agentic loop and codebase awareness. Developers who want AI at the center of the editor tend to prefer Cursor — see our head-to-head." },
+      { q: "Cursor or Windsurf?", a: "Both are AI-native VS Code-style editors racing on the same features. It often comes down to which agent flow feels better to you; our comparison breaks down the differences." },
+      { q: "Does it host my app?", a: "No. Cursor edits code in your repository — you still deploy and host it yourself. If you want prompt-to-hosted-app in one place, that's what app builders like Lovable do." },
+    ],
+    alternativeSlugs: ["windsurf", "github-copilot", "lovable"],
+  },
+  {
+    name: "Google Antigravity",
+    slug: "google-antigravity",
+    tagline: "Google's agent-first development platform.",
+    description:
+      "Antigravity is Google's agentic coding environment built around its Gemini models, designed so developers orchestrate AI agents that work across the editor, terminal, and browser rather than editing line by line. It is Google's push into agent-driven software development.",
+    websiteUrl: "https://antigravity.google",
+    rating: 4.0,
+    cats: ["ai-ides-coding-agents", "ai-tools"],
+    heroSummary:
+      "Antigravity is Google's bet that the editor is the wrong center of gravity for AI development. Instead of making you a faster typist, it puts Gemini-powered agents at the middle of the workflow, coordinating work across the editor, terminal, and browser. It is ambitious, genuinely different, and — being new and from Google — moving fast and still proving itself.",
+    verdict:
+      "The most interesting rethink of the AI development surface right now: if you believe the future is delegating to agents rather than autocompleting lines, Antigravity is built for that world from the ground up, with Google's Gemini models behind it. The catch is maturity — it is newer and less battle-tested than Cursor, the mental model takes adjustment, and as a fast-moving Google product the details will shift. A strong tool to try and watch; not yet the safe default.",
+    editorialScore: 8.0,
+    useItFor:
+      "Developers who want to work agent-first — delegating and reviewing rather than typing — and are comfortable on the frontier with Google's Gemini models.",
+    skipItIf:
+      "You want a proven, stable AI editor that makes you faster today with no new mental model — Cursor is the safer pick.",
+    goodPoints: [
+      "Agent-first by design, not an agent bolted onto an editor.",
+      "Coordinates work across editor, terminal, and browser.",
+      "Backed by Google's Gemini models and Google's infrastructure.",
+      "Points at where AI development is plausibly heading.",
+    ],
+    weakPoints: [
+      "New and less proven than the established AI editors.",
+      "Agent-first workflow is a genuine mental-model shift to learn.",
+      "As a fast-moving Google product, specifics and pricing can change.",
+    ],
+    pricingSummary: [
+      { plan: "Access", price: "See official site", note: "Google has launched Antigravity publicly; check antigravity.google for current availability, tiers, and any usage limits. Verified reachable July 2026; specific pricing not restated here to avoid stale figures." },
+    ],
+    pricingUrl: "https://antigravity.google",
+    howToRedeem: defaultRedeem,
+    faq: [
+      { q: "What makes Antigravity different?", a: "It's agent-first: rather than a smarter editor, it's built around orchestrating AI agents across the editor, terminal, and browser, powered by Google's Gemini models." },
+      { q: "Antigravity or Cursor?", a: "Cursor is the proven AI editor that makes you faster today; Antigravity is Google's newer, agent-first bet on where development is heading. See our comparison for the trade-off." },
+      { q: "Which models does it use?", a: "It's built around Google's Gemini models. Check the official site for the current model lineup, since Google updates these frequently." },
+      { q: "Is it ready for daily work?", a: "It's public and capable, but newer and less battle-tested than the established editors. Try it alongside your current tool before you commit a critical project." },
+    ],
+    alternativeSlugs: ["cursor", "devin"],
+  },
+  {
+    name: "Windsurf (now Devin Desktop)",
+    slug: "windsurf",
+    tagline: "Renamed: Windsurf is now Devin Desktop, under Cognition.",
+    description:
+      "Windsurf, the AI IDE known for its Cascade agent, has been renamed Devin Desktop under Cognition. Its own site states it plainly: \"Devin Desktop is the new name for Windsurf.\" The change ships as an over-the-air update, so plans, pricing, extensions, and settings carry over, and windsurf.com now redirects to devin.ai/desktop. If you're looking for Windsurf, you want Devin Desktop. Verified July 2026.",
+    websiteUrl: "https://devin.ai/desktop",
+    rating: 0,
+    cats: ["ai-ides-coding-agents", "ai-tools"],
+    pricingUrl: "https://devin.ai/pricing",
+    alternativeSlugs: ["cursor", "devin"],
+  },
+  {
+    name: "GitHub Copilot",
+    slug: "github-copilot",
+    tagline: "The AI pair programmer, everywhere you already code.",
+    description:
+      "GitHub Copilot is the incumbent AI coding assistant: inline autocomplete, chat, and agent features that live inside VS Code, JetBrains, Visual Studio, and GitHub itself. Its reach and native IDE integrations make it the default many teams already have.",
+    websiteUrl: "https://github.com/features/copilot",
+    rating: 4.3,
+    cats: ["ai-ides-coding-agents", "ai-tools"],
+    heroSummary:
+      "GitHub Copilot is the AI coding assistant most developers meet first, because it lives inside the editors and the GitHub workflow they already use — VS Code, JetBrains, Visual Studio, the CLI, and github.com. It does autocomplete, chat, code review, and agent tasks without asking you to change tools, which is both its biggest strength and the reason a dedicated editor can still out-depth it.",
+    verdict:
+      "The safest, least disruptive way to put capable AI into a team's existing workflow — it's already in your IDE and often already in your GitHub bill. The catch is that meeting you where you are also caps how deep it goes: a purpose-built editor like Cursor feels more tightly integrated, and the newer usage-credit model on paid tiers means heavy agent use can cost beyond the flat fee. For most teams the honest question isn't whether Copilot is good — it is — but whether they need more than good.",
+    editorialScore: 8.5,
+    useItFor:
+      "Teams and individuals who want strong AI assistance inside the IDE and GitHub workflow they already use, with minimal change.",
+    skipItIf:
+      "You want the deepest possible AI-editor integration and are willing to switch editors for it — Cursor goes further.",
+    goodPoints: [
+      "Lives in the tools you already run: VS Code, JetBrains, Visual Studio, CLI, and GitHub itself.",
+      "Genuinely useful free tier (2,000 completions a month) and student/OSS-maintainer access.",
+      "Agent mode, chat, and agentic code review round it out well beyond plain autocomplete.",
+      "Enterprise procurement is trivial when you're already a GitHub customer.",
+    ],
+    weakPoints: [
+      "As an assistant bolted onto a host IDE, it feels less unified than a dedicated AI editor.",
+      "Paid tiers now include monthly usage credits, so heavy premium-model use can exceed the flat price.",
+      "Best experience assumes you're inside the GitHub/Microsoft ecosystem.",
+    ],
+    pricingSummary: [
+      { plan: "Free", price: "$0", note: "2,000 completions/mo plus access to models like Haiku 4.5 and GPT-5 mini. Verified July 2026." },
+      { plan: "Pro", price: "$10 / month", note: "Unlimited completions and next-edit suggestions, cloud agent, code review, plus $15 monthly credits. Verified July 2026." },
+      { plan: "Pro+", price: "$39 / month", note: "Adds premium models (incl. Opus) and $70 monthly credits. Verified July 2026." },
+      { plan: "Business / Enterprise", price: "Per user; contact sales", note: "Org controls, codebase indexing, and custom model options." },
+    ],
+    pricingUrl: "https://github.com/features/copilot/plans",
+    howToRedeem: defaultRedeem,
+    faq: [
+      { q: "Is GitHub Copilot free?", a: "There's a real free plan with 2,000 completions a month and chat, plus free Pro access for verified students and open-source maintainers. Pro is $10/month (verified July 2026)." },
+      { q: "Copilot or Cursor?", a: "Copilot meets you inside the IDE you already use; Cursor is a dedicated AI editor with deeper, more unified integration. If you won't switch editors, Copilot; if you will, Cursor tends to go further. See our head-to-head." },
+      { q: "Does it work outside VS Code?", a: "Yes — JetBrains IDEs, Visual Studio, the command line, and github.com are all supported, which is a big part of its appeal." },
+      { q: "What are the monthly credits?", a: "Paid tiers include a credit allowance for premium-model and agent usage ($15 on Pro, $70 on Pro+); heavy use beyond that is billed on top. Confirm current amounts on the plans page." },
+      { q: "Is my code used for training?", a: "GitHub documents data-use and privacy controls, with stronger guarantees on Business/Enterprise. Check the current data-handling terms before rolling it out at work." },
+    ],
+    alternativeSlugs: ["cursor", "claude-code"],
+  },
+  {
+    name: "Claude Code",
+    slug: "claude-code",
+    tagline: "Anthropic's coding agent, in your terminal.",
+    description:
+      "Claude Code is Anthropic's agentic coding tool that works from the terminal and IDE extensions, reading and editing your real repository, running commands, and handling multi-step tasks with the Claude models. It targets developers who want an agent inside their existing workflow.",
+    websiteUrl: "https://claude.com",
+    rating: 0,
+    cats: ["ai-ides-coding-agents", "ai-tools"],
+    pricingUrl: "https://claude.com/pricing",
+    alternativeSlugs: ["cursor", "openai-codex"],
+  },
+  {
+    name: "OpenAI Codex",
+    slug: "openai-codex",
+    tagline: "OpenAI's cloud and CLI coding agent.",
+    description:
+      "Codex is OpenAI's software-engineering agent that works both as a cloud service and a command-line tool, taking tasks and returning code changes with tests. It is OpenAI's answer to autonomous, delegated coding.",
+    websiteUrl: "https://openai.com",
+    rating: 0,
+    cats: ["ai-ides-coding-agents", "ai-tools"],
+    alternativeSlugs: ["claude-code", "devin"],
+  },
+  {
+    name: "Devin",
+    slug: "devin",
+    tagline: "An autonomous AI software engineer, plus the IDE formerly called Windsurf.",
+    description:
+      "Devin, from Cognition, is an autonomous software engineer that takes a task and plans, writes, tests, and iterates on code with minimal supervision. Cognition also ships Devin Desktop — the IDE previously known as Windsurf — so the agent and the editor now sit in one product line. Verified July 2026.",
+    websiteUrl: "https://devin.ai",
+    rating: 0,
+    cats: ["ai-ides-coding-agents", "ai-tools"],
+    pricingUrl: "https://devin.ai/pricing",
+    alternativeSlugs: ["cursor", "openai-codex"],
+  },
+  {
+    name: "Kiro",
+    slug: "kiro",
+    tagline: "Spec-driven agentic development, from AWS.",
+    description:
+      "Kiro is AWS's agentic IDE built around spec-driven development: you describe requirements and it generates specs, design, and code while keeping them in sync. It targets teams that want structure around AI-generated code.",
+    websiteUrl: "https://kiro.dev",
+    rating: 0,
+    cats: ["ai-ides-coding-agents", "ai-tools"],
+    pricingUrl: "https://kiro.dev/pricing",
+    alternativeSlugs: ["cursor", "windsurf"],
+  },
+  {
+    name: "Trae",
+    slug: "trae",
+    tagline: "ByteDance's adaptive AI IDE.",
+    description:
+      "Trae is an AI IDE from ByteDance offering agent-driven building, chat, and autocomplete in a familiar editor, and has drawn attention for generous access to frontier models. It is a fast-moving newcomer in the AI-editor race.",
+    websiteUrl: "https://trae.ai",
+    rating: 0,
+    cats: ["ai-ides-coding-agents", "ai-tools"],
+    alternativeSlugs: ["cursor", "windsurf"],
+  },
+  {
+    name: "Zed",
+    slug: "zed",
+    tagline: "A blazing-fast editor with AI built in.",
+    description:
+      "Zed is a high-performance, collaborative code editor written in Rust, with AI assistance and agentic editing integrated natively. Its draw is speed and a clean, native feel for developers who find heavier editors sluggish.",
+    websiteUrl: "https://zed.dev",
+    rating: 0,
+    cats: ["ai-ides-coding-agents", "ai-tools"],
+    pricingUrl: "https://zed.dev/pricing",
+    alternativeSlugs: ["cursor", "github-copilot"],
+  },
+
+  /* ============ v3 — new AI app builders ============================= */
+  {
+    name: "Bolt.new",
+    slug: "bolt-new",
+    tagline: "Prompt to full-stack app, in the browser.",
+    description:
+      "Bolt.new, from StackBlitz, turns prompts into full-stack web apps entirely in the browser, running and editing the code in a live sandbox with instant preview and deploy. It sits between a pure app builder and a coding environment.",
+    websiteUrl: "https://bolt.new",
+    rating: 4.2,
+    cats: ["no-code-app-builders", "ai-tools"],
+    heroSummary:
+      "Bolt.new, from the StackBlitz team, builds full-stack web apps from a chat prompt and runs them live in the browser — no local setup, instant preview, and a real code sandbox you can edit and deploy. It sits deliberately between an app builder and an editor: more hands-on than a pure builder, far less setup than an IDE.",
+    verdict:
+      "One of the fastest ways to get a real, running full-stack app out of a prompt, and the in-browser sandbox with live preview is a genuine pleasure for people who like to see and touch the code. The catch is the token/credit model: heavy iteration burns through your allowance, and complex apps still hit the same walls every prompt-to-app tool hits, where you need to understand what was generated to push it further. Closer to Lovable than to a no-code builder — and best for people who don't mind that.",
+    editorialScore: 8.3,
+    useItFor:
+      "Technical and semi-technical builders who want prompt-to-app speed but like to watch, run, and tweak the code live.",
+    skipItIf:
+      "You want the backend, auth, and hosting fully handled with the least code contact — Lovable leans further in that direction.",
+    goodPoints: [
+      "Full-stack apps running live in the browser with zero local setup.",
+      "A real code sandbox with instant preview — you can read and edit what it generates.",
+      "Fast from prompt to something you can click, share, and deploy.",
+      "Backed by StackBlitz, whose in-browser dev environment is mature.",
+    ],
+    weakPoints: [
+      "Token/credit consumption adds up quickly during heavy iteration.",
+      "Complex or unusual app logic still needs you to understand the generated code.",
+      "You more often bring your own backend/services than with a builder that wires them in.",
+    ],
+    pricingSummary: [
+      { plan: "Free", price: "No card required", note: "\"Start building for free\" — a token allowance to try real projects. Confirm current limits on the official pricing page. Verified July 2026." },
+      { plan: "Paid tiers", price: "Token/credit-metered", note: "Higher tiers raise your token allowance; heavy iteration consumes tokens. Exact plan names and prices are on the official pricing page — check before subscribing." },
+    ],
+    pricingUrl: "https://bolt.new/pricing",
+    howToRedeem: defaultRedeem,
+    faq: [
+      { q: "Is Bolt.new free?", a: "Yes, there's a free tier — the site says \"start building for free.\" It's a token allowance; paid tiers raise it. Confirm the current limits and prices on the official pricing page." },
+      { q: "Bolt.new or Lovable?", a: "Both turn prompts into full-stack apps. Bolt gives you a live in-browser code sandbox to tinker with; Lovable handles more of the backend and deploy for you. See our head-to-head." },
+      { q: "Do I need to code?", a: "Not to start, but Bolt rewards people who can read code — you build faster when you understand what it generates and can nudge it." },
+      { q: "Does it deploy my app?", a: "Yes, you can preview and deploy from the browser sandbox; StackBlitz's environment runs the app live as you build." },
+    ],
+    alternativeSlugs: ["lovable", "v0", "replit"],
+  },
+  {
+    name: "v0",
+    slug: "v0",
+    tagline: "Vercel's AI for generating UI and app code.",
+    description:
+      "v0 is Vercel's generative tool that turns prompts and images into React and Tailwind components and, increasingly, full app flows you can ship to Next.js. It excels at getting a polished front end fast.",
+    websiteUrl: "https://v0.app",
+    rating: 0,
+    cats: ["no-code-app-builders", "ai-tools"],
+    alternativeSlugs: ["lovable", "bolt-new"],
+  },
+  {
+    name: "Replit",
+    slug: "replit",
+    tagline: "Cloud IDE plus an AI agent that ships apps.",
+    description:
+      "Replit is a browser-based development platform that pairs a full cloud IDE with an AI Agent that can build, run, and host applications from a prompt. It removes local setup entirely, which suits learners and fast prototypes.",
+    websiteUrl: "https://replit.com",
+    rating: 0,
+    cats: ["no-code-app-builders", "ai-tools"],
+    pricingUrl: "https://replit.com/pricing",
+    alternativeSlugs: ["lovable", "bolt-new"],
+  },
+  {
+    name: "Firebase Studio",
+    slug: "firebase-studio",
+    tagline: "Google's cloud workspace for AI app building.",
+    description:
+      "Firebase Studio is Google's browser-based environment (the evolution of Project IDX) for building full-stack and AI apps, with Gemini assistance, templates, and one-click paths into Firebase hosting and services. It suits builders already in Google's ecosystem.",
+    websiteUrl: "https://firebase.studio",
+    rating: 0,
+    cats: ["no-code-app-builders", "ai-tools"],
+    alternativeSlugs: ["lovable", "replit"],
+  },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -889,12 +1185,10 @@ const couponSeed: CouponSeed[] = [
   { store: "base44", title: "See current Base44 plans and credit allowances", type: "deal", discountLabel: "VIEW PLANS", terms: "Paid tiers are credit-metered and change periodically — the official pricing page is definitive.", destinationUrl: "https://base44.com/pricing", isVerified: true, sortWeight: 90 },
   { store: "base44", title: "Save with annual billing on paid plans", type: "deal", discountLabel: "ANNUAL SAVING", terms: "Choosing annual billing lowers the effective monthly price of Base44's paid tiers versus paying monthly — the official pricing page states the live rate.", destinationUrl: "https://base44.com/pricing", isVerified: true, sortWeight: 85 },
   { store: "base44", title: "Earn extra credits with referrals", type: "deal", discountLabel: "REFERRAL CREDITS", terms: "Base44's in-app refer-a-friend option grants extra message credits for each successful invite. Credits reset each month, so time invites within your build cycle.", destinationUrl: "https://base44.com", isVerified: false, sortWeight: 70 },
-  { store: "base44", title: "Community code — reported 15% off", code: "TAAFT", type: "code", discountLabel: "15% OFF", terms: "Community-submitted code reported to give 15% off at Base44. Try it at checkout and vote whether it worked — we surface what the community confirms.", destinationUrl: "https://base44.com", isVerified: false, sortWeight: 95 },
   // Lovable
   { store: "lovable", title: "Free tier — daily messages, real code output", type: "deal", discountLabel: "FREE TIER", terms: "Build public projects with daily message limits and inspect the generated code before paying.", destinationUrl: "https://lovable.dev/pricing", isVerified: true, sortWeight: 100 },
-  { store: "lovable", title: "Annual billing discount on Pro plans", type: "deal", discountLabel: "ANNUAL SAVING", terms: "Choosing annual billing reduces the effective monthly price of Pro tiers — current rates on the official page.", destinationUrl: "https://lovable.dev/pricing", isVerified: true, sortWeight: 90 },
-  { store: "lovable", title: "Earn message credits by inviting others", type: "deal", discountLabel: "REFERRAL CREDITS", terms: "Lovable's referral program can grant additional message credits when people you invite sign up — check the current terms in-app.", destinationUrl: "https://lovable.dev", isVerified: false, sortWeight: 70 },
-  { store: "lovable", title: "Community code — reported 10% off", code: "SLIXYT20", type: "code", discountLabel: "10% OFF", terms: "Community-submitted code reported to give 10% off storewide at Lovable. Try it at checkout and vote whether it worked — we surface what the community confirms.", destinationUrl: "https://lovable.dev", isVerified: false, sortWeight: 95 },
+  { store: "lovable", title: "Save with annual billing on paid plans", type: "deal", discountLabel: "ANNUAL SAVING", terms: "Paid plans are typically cheaper per month when billed annually. The public pricing page didn't state an exact annual rate at our last check, so confirm the current terms on lovable.dev/pricing before you commit.", destinationUrl: "https://lovable.dev/pricing", isVerified: false, sortWeight: 90 },
+  { store: "lovable", title: "Student discount with a valid student email", type: "deal", discountLabel: "STUDENT", terms: "Lovable offers a discount for students who verify with a valid student email. Check current eligibility and the exact rate on the official students page. Verified July 2026.", destinationUrl: "https://lovable.dev/students", isVerified: true, sortWeight: 88 },
   // Daraz
   { store: "daraz", title: "Today's vouchers and flash sales on Daraz", type: "deal", discountLabel: "DAILY DEALS", terms: "Collectable vouchers and rotating flash sales on the Daraz app and site; terms shown per voucher at checkout.", destinationUrl: "https://www.daraz.pk", isVerified: true, sortWeight: 100 },
   { store: "daraz", title: "Bank-card discounts on selected days", type: "deal", discountLabel: "BANK OFFERS", terms: "Partner bank cards get percentage discounts on selected days and categories — see the bank offers page for the current calendar.", destinationUrl: "https://www.daraz.pk", isVerified: true, sortWeight: 90 },
@@ -968,6 +1262,120 @@ type ReviewExtra = {
 };
 
 const reviewExtras: Record<string, ReviewExtra> = {
+  "bolt-new": {
+    startingPriceLabel: "Free tier · paid is token-metered",
+    ratingBreakdown: crit(8.5, 8.0, 8.5, 7.5, 8.0),
+    reviewBody: doc(
+      h2("What Bolt.new is"),
+      pt(
+        "Bolt.new, from StackBlitz, turns a chat prompt into a full-stack web app that runs live in your browser. There's no local setup and no waiting: you describe what you want, watch it build in a real code sandbox, click through the running result, edit the code if you like, and deploy. It deliberately sits between a no-code app builder and a coding environment — more hands-on than the former, far less ceremony than the latter.",
+      ),
+      h2("Where it earns its score"),
+      pt(
+        "The in-browser experience is the draw. Because StackBlitz has spent years making a full development environment run in the browser, Bolt gives you something most prompt-to-app tools don't: a genuine, editable sandbox with instant preview. For people who like to see the code and nudge it, that transparency builds trust the black-box builders can't. It's fast, it's shareable, and it gets you to a clickable app quickly.",
+      ),
+      h2("The catch"),
+      pt(
+        "Bolt runs on a token/credit model, and heavy iteration — the exact loop that makes these tools fun — consumes tokens quickly, so budget for it. And like every prompt-to-app tool, the further you push into complex or unusual logic, the more you need to understand what was generated to keep going. It rewards technical comfort more than a builder that hides the code entirely.",
+      ),
+      quote(
+        "Bolt.new is the prompt-to-app tool for people who want to keep one hand on the code.",
+      ),
+      h2("Who it's for"),
+      pt(
+        "Reach for Bolt if you want prompt-to-app speed but like watching and editing the code as it's built. If you'd rather the backend, auth, and hosting were handled with the least code contact possible, Lovable leans further that way — and plenty of builders keep both around. Start on the free tier to see whether the workflow fits before the tokens matter.",
+      ),
+    ),
+  },
+  "google-antigravity": {
+    startingPriceLabel: "See official site for current access",
+    ratingBreakdown: crit(7.5, 8.5, 8.0, 8.0, 7.5),
+    reviewBody: doc(
+      h2("What Antigravity is"),
+      pt(
+        "Google's Antigravity starts from a contrarian premise: that making the editor smarter is the wrong goal, because the editor shouldn't be the center of the work at all. Instead it puts Gemini-powered agents in the middle, coordinating across the editor, terminal, and browser, so you spend your time planning, delegating, and reviewing rather than typing line by line. It is Google's serious entry into agent-driven development.",
+      ),
+      h2("Where it's compelling"),
+      pt(
+        "If you already feel the shift toward delegating chunks of work to agents, Antigravity is built for that world natively rather than retrofitting it onto an editor. It has Google's models and infrastructure behind it, and it's one of the clearest attempts to answer what development looks like when agents, not files, are the unit of work. That vision is the reason to pay attention.",
+      ),
+      h2("The catch"),
+      pt(
+        "It's new. Compared with an established editor like Cursor, it's less battle-tested, the agent-first workflow is a real mental-model adjustment, and as a fast-moving Google product the specifics — including availability and pricing — will keep shifting. That's the normal cost of being early, not a flaw, but it's why this is a tool to try and watch rather than to bet a critical deadline on today.",
+      ),
+      quote(
+        "Antigravity is the most interesting question in AI development right now. Whether it's the answer is still being written.",
+      ),
+      h2("Who it's for"),
+      pt(
+        "Try Antigravity if you want to work agent-first and you're comfortable on the frontier with Gemini models. If you want a proven tool that makes you faster this week with no new habits to learn, Cursor is the safer default — run Antigravity alongside it and see which way the wind is blowing. Check antigravity.google for current access, since Google iterates quickly.",
+      ),
+    ),
+  },
+  "github-copilot": {
+    startingPriceLabel: "Free · Pro from $10/mo",
+    ratingBreakdown: crit(9.0, 8.5, 8.5, 8.0, 9.0),
+    reviewBody: doc(
+      h2("What GitHub Copilot is"),
+      pt(
+        "GitHub Copilot is the AI coding assistant most developers encounter first, and the reason is distribution rather than novelty: it runs inside the editors and the GitHub workflow they already use. VS Code, JetBrains IDEs, Visual Studio, the command line, and github.com all get the same assistant — inline completions, a chat that can see your code, agentic edits, and code review. You don't adopt Copilot so much as switch it on where you already work.",
+      ),
+      h2("Where it earns its score"),
+      pt(
+        "The strength is reach. For a team already living in GitHub, Copilot is the path of least resistance: no new editor, no new vendor, often no new invoice. The free tier is genuinely useful — two thousand completions a month plus chat — and verified students and open-source maintainers get Pro at no cost, which quietly makes it the default for a huge population of developers. On top of completions, the agent mode and agentic code review push it well past the autocomplete tool people remember from a couple of years ago.",
+      ),
+      pt(
+        "Because it is a Microsoft/GitHub product, the enterprise story is easy in the way that matters to buyers: procurement, SSO, org controls, and codebase indexing are all there, and you're negotiating with a vendor you already trust with your source code.",
+      ),
+      h2("The catch"),
+      pt(
+        "Meeting you inside your existing IDE is also the ceiling. Copilot is an excellent assistant layered onto a host editor; a purpose-built AI editor like Cursor feels more unified, because the whole tool is designed around the AI rather than hosting it. The other honest note is cost structure: paid tiers now bundle monthly usage credits ($15 on Pro, $70 on Pro+), so leaning hard on premium models and agents can push spend beyond the flat subscription. For most people it won't; for heavy users it can.",
+      ),
+      quote(
+        "Copilot is the safest AI coding decision a team can make. Whether it's the best one depends on whether 'safe and already here' is what you're optimizing for.",
+      ),
+      h2("Who it's for — and who it isn't"),
+      pt(
+        "Use Copilot if you want strong AI help with near-zero disruption, especially if your team is already on GitHub. It is not the tool for a non-developer trying to build an app from a prompt — that's an app builder like Lovable — and it's not the deepest AI-editor experience if you're willing to change editors, where Cursor goes further. It is, however, the answer that's hardest to argue with for a working team that just wants good AI in the tools they already have.",
+      ),
+      h2("Pricing, honestly"),
+      pt(
+        "Free is real: 2,000 completions a month plus chat, with free Pro for verified students and OSS maintainers. Pro is $10/month for unlimited completions, cloud agent, and code review with $15 of monthly credits; Pro+ is $39/month with premium models and $70 of credits; Max is $100/month. Business and Enterprise are per-user with org controls. All figures verified on the official plans page in July 2026 — confirm at checkout, since the credit model is new and adjusts.",
+      ),
+    ),
+  },
+  cursor: {
+    startingPriceLabel: "Free tier · Pro from $16/mo",
+    ratingBreakdown: crit(9.0, 9.5, 9.0, 8.0, 8.5),
+    reviewBody: doc(
+      h2("What Cursor is"),
+      pt(
+        "Cursor is an AI-first code editor built as a fork of VS Code. That single design choice explains most of its appeal: you keep the extensions, keybindings, themes, and muscle memory you already have, and Cursor layers AI over the top of them rather than asking you to learn a new tool. The AI is not a sidebar you occasionally consult — it is woven through the editor as predictive multi-line edits, a chat that has read your whole repository, and an agent that can plan and apply changes across many files at once.",
+      ),
+      h2("Where it earns its score"),
+      pt(
+        "The standout is how well the AI understands the project you are actually in. Ask a question and Cursor answers with your files, your types, and your conventions in view, not a generic snippet. Tab completion predicts the next edit you were going to make — often several lines, sometimes in a different file — and it is the feature developers say they miss most the moment they switch back to a plain editor. Agent mode takes this further, carrying out a described task across the codebase while you supervise, which is where the time savings become real rather than novelty.",
+      ),
+      pt(
+        "Because it is VS Code underneath, there is no adoption tax. Teams can move in an afternoon, keep their existing setup, and layer on MCP servers, rules, and hooks to shape how the AI behaves. For a company standardizing on one AI editor, that combination of familiarity and control matters as much as raw model quality.",
+      ),
+      h2("The catch"),
+      pt(
+        "Cursor assumes you can read and steer code. It accelerates a developer; it does not replace one. If you can't tell when the agent has gone wrong, you can't use it safely — the tool amplifies judgment you already have rather than supplying it. The other honest caveat is cost: the base subscription is flat, but the heaviest frontier models run on usage-based billing, so a heavy day of agent work can cost more than the sticker price implies. Budget for it, or cap it.",
+      ),
+      quote(
+        "Cursor makes a good developer faster. It does not make a non-developer into one — that is a different tool, and a different review.",
+      ),
+      h2("Who it's for — and who it isn't"),
+      pt(
+        "Use Cursor if you write software and want the AI at the center of your editor instead of off to the side. It is, for our money, the strongest tool in its category for that reader. But Promopedia's core audience is founders and builders shipping products, many of whom don't write code — and for them Cursor is the wrong starting point. If you want to go from an idea to a deployed, working app without opening a repository, an AI app builder like Lovable will get you there; Cursor is where you'd graduate once you (or an engineer you hire) own the code.",
+      ),
+      h2("Pricing, honestly"),
+      pt(
+        "There is a free Hobby plan with limited Agent requests and Tab completions — genuinely enough to judge whether the workflow clicks for you. Pro is $16/month for extended limits, frontier-model access, and cloud agents, with the strongest models metered on usage. Teams is $32/user/month adding central billing, SSO, and agentic code review. All figures verified on the official pricing page in July 2026; confirm at checkout, since usage-based tools adjust often.",
+      ),
+    ),
+  },
   base44: {
     startingPriceLabel: "Free plan · paid is credit-metered",
     ratingBreakdown: crit(9.5, 8.5, 9.0, 8.5, 9.0),
@@ -997,7 +1405,7 @@ const reviewExtras: Record<string, ReviewExtra> = {
     ),
   },
   lovable: {
-    startingPriceLabel: "Free tier · paid plans, message-metered",
+    startingPriceLabel: "Free tier · paid plans, credit-metered",
     ratingBreakdown: crit(9.0, 9.0, 9.5, 8.5, 9.5),
     reviewBody: doc(
       h2("What Lovable actually is"),
@@ -1105,9 +1513,8 @@ const comparisonSeed: ComparisonSeed[] = [
     subtitle: "The AI app-builder decision comes down to one question: do you need to own the code?",
     aSlug: "base44",
     bSlug: "lovable",
-    isFeatured: true,
     intro:
-      "Both turn plain-language prompts into working software, and both are strong. They differ on the thing that matters most six months in: what you're left holding. Base44 optimizes for the shortest path to a live, hosted app; Lovable optimizes for not being locked in. Here is the honest breakdown.",
+      "Re-tested July 2026 — verdict updated. Both turn plain-language prompts into working software, and both are strong. They differ on the thing that matters most six months in: what you're left holding. Base44 optimizes for the shortest path to a live, hosted app; Lovable optimizes for not being locked in — and on a re-test with fresh pricing and capability checks on both sides, that ownership gap is the one that still decides it for most people. Here is the honest breakdown.",
     criteria: [
       { label: "Code ownership", aText: "Managed platform — data exports, but no full-stack self-host.", bText: "Exports standard React + Supabase code and syncs to GitHub.", winner: "b", note: "The core difference: Lovable leaves you with a repo; Base44 keeps the stack." },
       { label: "Speed to a hosted app", aText: "Fastest — database, auth, and hosting are built in.", bText: "Fast, but you wire Supabase and deploy the code yourself.", winner: "a" },
@@ -1256,6 +1663,165 @@ const comparisonSeed: ComparisonSeed[] = [
     seoDescription:
       "App logic, design quality, CMS, and scalability compared. Bubble for full-stack no-code apps; Webflow for premium marketing sites and content.",
   },
+
+  /* ==================== v3 — flagship + AI IDE matchups ================ */
+  {
+    slug: "lovable-vs-cursor",
+    title: "Lovable vs Cursor",
+    subtitle: "An AI app builder and a professional IDE do different jobs. The honest question is which job is yours.",
+    aSlug: "lovable",
+    bSlug: "cursor",
+    isFeatured: true,
+    intro:
+      "This is the comparison people mean when they ask whether to use Lovable or Cursor, and an honest answer starts by refusing the premise. These are not two versions of the same tool. Lovable turns a description into a deployed, full-stack application. Cursor is a professional code editor that makes a developer faster inside a repository they already own. Which one wins depends almost entirely on whether you write code.",
+    criteria: [
+      { label: "Who it's for", aText: "Founders, indie hackers, and SMB builders shipping a product.", bText: "Professional developers working in a real codebase.", winner: "tie", note: "Genuinely different audiences — this row decides every row under it." },
+      { label: "Coding knowledge required", aText: "None to start; you describe what you want and refine it.", bText: "Substantial — it accelerates people who can already read and steer code.", winner: "a", note: "For this site's core reader, who mostly doesn't code, that is decisive." },
+      { label: "Idea to deployed app", aText: "The whole point: prompts to a running, hosted app.", bText: "Edits code only — you still build the backend, deploy, and host it.", winner: "a" },
+      { label: "Backend & hosting", aText: "Supabase backend, auth, and deploy built in.", bText: "Not its job; you wire and host everything yourself.", winner: "a" },
+      { label: "Code ownership & export", aText: "Real React/Supabase code you can sync to GitHub.", bText: "It is your repository — total ownership by definition.", winner: "b" },
+      { label: "Ceiling & flexibility", aText: "High for conventional apps; unusual logic gets harder.", bText: "Effectively unlimited — a full editor on any codebase.", winner: "b" },
+      { label: "Learning curve", aText: "Gentle: describe, review, refine.", bText: "Steep if you can't code; natural if you can.", winner: "a" },
+      { label: "Pricing model", aText: "Free tier; paid is credit-metered, so heavy iteration costs credits.", bText: "Free tier; Pro $16/mo, heaviest models billed on usage.", winner: "tie" },
+    ],
+    verdictA:
+      "Choose Lovable if you want to go from an idea to a working, deployed product without a development background — which describes most of the people this site is written for.",
+    verdictB:
+      "Choose Cursor if you write software for a living. Inside a real codebase it isn't close: Cursor is the better tool, and Lovable isn't trying to be.",
+    bottomLine:
+      "For Promopedia's core reader — founders and builders shipping a product without a development background — Lovable wins. If you are a professional developer working in a real codebase, Cursor wins, and it isn't close. Both statements are true at once; pick the one that describes you.",
+    seoTitle: "Lovable vs Cursor (2026): AI App Builder or AI IDE?",
+    seoDescription:
+      "Lovable builds and deploys a full app from prompts; Cursor makes developers faster inside a real codebase. Which one wins depends on whether you write code — here is the honest split.",
+  },
+  {
+    slug: "lovable-vs-bolt-new",
+    title: "Lovable vs Bolt.new",
+    subtitle: "Two prompt-to-app builders that diverge on what happens after the first version works.",
+    aSlug: "lovable",
+    bSlug: "bolt-new",
+    intro:
+      "Lovable and Bolt.new are the closest true head-to-head in this category: both take a prompt and hand back a running full-stack web app. The differences show up once the demo works and you have to live with the thing — where the code goes, how the backend is wired, and how much the iteration costs.",
+    criteria: [
+      { label: "Idea to working app", aText: "Very fast, with backend and deploy handled.", bText: "Very fast, running live in the browser sandbox.", winner: "tie" },
+      { label: "Backend story", aText: "Supabase backend and auth wired in as a first-class path.", bText: "You bring your own backend/services more often.", winner: "a" },
+      { label: "Code ownership", aText: "Standard React/Supabase code, syncable to GitHub.", bText: "Real code in a StackBlitz sandbox you can export.", winner: "tie" },
+      { label: "In-browser editing", aText: "Chat-led with visual edits.", bText: "A genuine in-browser IDE with live preview.", winner: "b", note: "Bolt is closer to an editor; Lovable is closer to a builder." },
+      { label: "Best-fit user", aText: "Non-developers shipping a real product.", bText: "Technical users who want to poke the code as it's generated.", winner: "tie" },
+      { label: "Free tier", aText: "Daily build credits plus monthly Cloud credits.", bText: "Free tier available; heavier use needs a paid plan.", winner: "tie" },
+    ],
+    verdictA:
+      "Choose Lovable if you want the backend, auth, and deploy handled for you and you'd rather describe changes than edit code.",
+    verdictB:
+      "Choose Bolt.new if you're comfortable in an editor and want to watch and tweak the code live as it's generated.",
+    bottomLine:
+      "Both are strong prompt-to-app builders. Lovable does more of the full-stack work for you, which is why it's our pick for non-developers; Bolt.new suits people who want their hands closer to the code.",
+    seoTitle: "Lovable vs Bolt.new (2026): Which AI App Builder Wins",
+    seoDescription:
+      "Backend story, code ownership, in-browser editing, and free tiers compared. Lovable for a handled full-stack path; Bolt.new for live code tinkering.",
+  },
+  {
+    slug: "lovable-vs-v0",
+    title: "Lovable vs v0",
+    subtitle: "A full-app platform versus the best UI generator in the business.",
+    aSlug: "lovable",
+    bSlug: "v0",
+    intro:
+      "This matchup is often framed as a rivalry, but it's really a scope difference. v0 is Vercel's tool for generating excellent React and Tailwind interfaces. Lovable is trying to produce the whole application — interface, backend, auth, and deployment. If you compare them on the front end alone you'll miss the point.",
+    criteria: [
+      { label: "Scope", aText: "Whole application: UI, backend, auth, hosting.", bText: "Primarily interface and app code you drop into Next.js.", winner: "a", note: "Different scopes — this is the crux." },
+      { label: "UI quality from a prompt", aText: "Good and improving.", bText: "Best in class; polished components fast.", winner: "b" },
+      { label: "Backend & auth", aText: "Supabase backend wired in.", bText: "You supply it.", winner: "a" },
+      { label: "Deploy story", aText: "Publish from the platform.", bText: "Ships naturally into Vercel/Next.js.", winner: "tie" },
+      { label: "Best-fit user", aText: "Someone who needs a working product end to end.", bText: "A developer or designer who needs a great front end fast.", winner: "tie" },
+    ],
+    verdictA:
+      "Choose Lovable if you need an actual working product — not just the screens — and you don't want to assemble the backend yourself.",
+    verdictB:
+      "Choose v0 if you already have (or can build) the rest of the stack and want the fastest route to a beautiful, production-ready front end.",
+    bottomLine:
+      "v0 makes the best front end; Lovable makes the whole product. For a founder shipping an app, Lovable is the more complete answer — plenty of developers happily use v0 alongside it.",
+    seoTitle: "Lovable vs v0 (2026): Full App Platform vs UI Generator",
+    seoDescription:
+      "Scope, UI quality, backend, and deploy compared. v0 leads on generated interfaces; Lovable delivers the whole working application.",
+  },
+  {
+    slug: "cursor-vs-windsurf",
+    title: "Cursor vs Windsurf (now Devin Desktop)",
+    subtitle: "The two AI-native editors racing on the same track — one of which just changed its name.",
+    aSlug: "cursor",
+    bSlug: "windsurf",
+    intro:
+      "Re-tested July 2026 — updated for a rename. First, the thing most comparisons haven't caught up with: Windsurf is now Devin Desktop, under Cognition. Its own site says so directly (\"Devin Desktop is the new name for Windsurf\"), windsurf.com redirects to devin.ai/desktop, and the change ships as an over-the-air update with plans and extensions carried over. The editor is the same one people know for its Cascade agent — the badge on it changed. With that settled: Cursor and Devin Desktop remain the closest matchup in the category, both AI-native VS Code-style editors with codebase awareness and cross-file agents. Feature lists converge every few months, so the honest deciding factor is which agent flow suits how you work.",
+    criteria: [
+      { label: "Editor familiarity", aText: "VS Code fork — extensions and keybindings carry over.", bText: "Familiar VS Code-style editing.", winner: "tie" },
+      { label: "Agentic editing", aText: "Agent mode plans and applies multi-file changes.", bText: "Cascade agent is the signature feature and very capable.", winner: "tie", note: "Both strong; preference is genuinely personal here." },
+      { label: "Autocomplete / next-edit", aText: "Tab prediction is the feature people miss most when they leave.", bText: "Strong completions; fewer people cite it as the reason they stay.", winner: "a" },
+      { label: "Momentum & ecosystem", aText: "The category's default with the largest community.", bText: "Strong following; smaller ecosystem.", winner: "a" },
+      { label: "Pricing", aText: "Free tier; Pro $16/mo with usage-based frontier models.", bText: "Free tier; paid plans compete closely.", winner: "tie" },
+      { label: "Best-fit user", aText: "Developers who want the category default.", bText: "Developers who prefer Cascade's flow.", winner: "tie" },
+    ],
+    verdictA:
+      "Choose Cursor if you want the category's default: the largest community, the strongest tab-completion, and the safest long-term bet.",
+    verdictB:
+      "Choose Windsurf if Cascade's agent flow clicks for you — it's a genuinely close competitor, not a runner-up.",
+    bottomLine:
+      "These two are close enough that you should trial both free tiers on your own repository for a day. Cursor is our pick on momentum and completion quality, but a developer who prefers Windsurf isn't wrong.",
+    seoTitle: "Cursor vs Windsurf (2026): Which AI IDE Should You Use",
+    seoDescription:
+      "Agentic editing, autocomplete, ecosystem, and pricing compared. Cursor leads on momentum and tab completion; Windsurf's Cascade is a genuine rival.",
+  },
+  {
+    slug: "cursor-vs-github-copilot",
+    title: "Cursor vs GitHub Copilot",
+    subtitle: "A dedicated AI editor versus the assistant your team probably already has.",
+    aSlug: "cursor",
+    bSlug: "github-copilot",
+    intro:
+      "Copilot is the incumbent: it lives inside the IDEs your team already uses and is often already paid for. Cursor asks you to switch editors in exchange for AI that sits at the centre rather than the side. The trade is disruption versus depth.",
+    criteria: [
+      { label: "Setup & adoption", aText: "New editor to install (though it's a VS Code fork).", bText: "Plugs into VS Code, JetBrains, Visual Studio you already run.", winner: "b" },
+      { label: "Codebase awareness", aText: "Deep — the editor is built around it.", bText: "Good and improving, but bolted onto the host IDE.", winner: "a" },
+      { label: "Agentic multi-file edits", aText: "Central to the product.", bText: "Available, generally less tightly integrated.", winner: "a" },
+      { label: "Enterprise reach", aText: "Teams tier with SSO and analytics.", bText: "Deep GitHub/enterprise integration and procurement familiarity.", winner: "b" },
+      { label: "Pricing", aText: "Free tier; Pro $16/mo (usage-based on top models).", bText: "Free tier for many; paid plans widely bundled already.", winner: "tie" },
+      { label: "Best-fit user", aText: "Developers who want AI at the centre of the editor.", bText: "Teams that want AI without changing tools.", winner: "tie" },
+    ],
+    verdictA:
+      "Choose Cursor if you want the deepest AI integration and you're willing to change editors to get it.",
+    verdictB:
+      "Choose GitHub Copilot if you'd rather not move — it meets your team in the IDE and procurement process you already have.",
+    bottomLine:
+      "Copilot is the path of least resistance and it's genuinely good. Cursor is the better AI experience if you'll switch editors. For most teams the honest test is a week in each.",
+    seoTitle: "Cursor vs GitHub Copilot (2026): Which AI Coding Tool Wins",
+    seoDescription:
+      "Adoption, codebase awareness, agentic editing, and pricing compared. Copilot fits your existing IDE; Cursor goes deeper if you'll switch.",
+  },
+  {
+    slug: "cursor-vs-google-antigravity",
+    title: "Cursor vs Google Antigravity",
+    subtitle: "The established leader against Google's agent-first newcomer.",
+    aSlug: "cursor",
+    bSlug: "google-antigravity",
+    intro:
+      "Cursor won the AI-editor race by making the editor smarter. Google's Antigravity argues the editor is the wrong unit entirely and puts agents at the centre, working across the editor, terminal, and browser. One is proven; the other is a bet on where this is heading.",
+    criteria: [
+      { label: "Maturity", aText: "Established, with a large community and steady releases.", bText: "Newer and moving fast; less battle-tested.", winner: "a" },
+      { label: "Agent-first design", aText: "Agent mode inside a familiar editor.", bText: "Built from the ground up around orchestrating agents.", winner: "b", note: "A real philosophical difference, not a feature gap." },
+      { label: "Model access", aText: "Multiple frontier models.", bText: "Built around Google's Gemini models.", winner: "tie" },
+      { label: "Familiarity", aText: "VS Code fork — you already know it.", bText: "New surface and mental model to learn.", winner: "a" },
+      { label: "Best-fit user", aText: "Developers wanting a proven, fast AI editor today.", bText: "Developers who want to work agent-first and are happy on the frontier.", winner: "tie" },
+    ],
+    verdictA:
+      "Choose Cursor if you want the proven tool that will make you faster this week with no philosophy to adopt.",
+    verdictB:
+      "Choose Antigravity if you believe agents — not files — are the future unit of work and you want to build that habit early.",
+    bottomLine:
+      "Cursor is the safe, excellent default. Antigravity is the more interesting bet, and worth watching closely; today it's the newer, less proven of the two.",
+    seoTitle: "Cursor vs Google Antigravity (2026): AI IDE Showdown",
+    seoDescription:
+      "Maturity, agent-first design, model access, and familiarity compared. Cursor is the proven default; Antigravity is Google's agent-first bet.",
+  },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -1397,6 +1963,159 @@ async function main() {
       : authorRows[i % authorRows.length].id;
 
   const postSeed = [
+    {
+      title: "The best AI app builders in 2026",
+      slug: "ai-app-builders-ranked-2026",
+      excerpt:
+        "We ranked the tools that turn a prompt into a working, deployed app. Lovable is our top pick, with the catch stated plainly, and Bolt, v0, Replit, Base44, and Firebase Studio each get an honest one-line verdict.",
+      categoryId: catBySlug.get("no-code-app-builders")!.id,
+      tags: ["ai-app-builders", "lovable", "roundup"],
+      readingMinutes: 8,
+      publishedAt: days(-1),
+      relatedStores: ["lovable", "bolt-new", "v0", "replit", "base44", "firebase-studio"],
+      content: doc(
+        pt("An AI app builder has one job that separates it from every other AI coding tool: it takes a plain description and hands back a working, deployed application, not just code. For founders, indie hackers, and small teams who want to ship a product without a development background, that is the whole game. Here is how the field ranks in 2026, and the catch that comes with each one."),
+        h2("Our top pick: Lovable"),
+        pt("Lovable wins because it does the most of the job for the person least able to do it themselves. You describe the app, and it produces a real React front end and a Supabase backend with auth, wires them together, and deploys — and the code is standard enough that an engineer you hire later can take it over. That combination, genuinely useful for a non-developer today and not a dead end tomorrow, is why it is our best overall pick."),
+        pt("The catch, stated plainly: Lovable is credit-metered, so heavy iteration consumes credits, and very unusual logic still gets harder the further you push it. Neither is a dealbreaker for its intended user, but you should know both before you start. Our full Lovable review goes deep, and the free tier lets you judge it on your own idea first."),
+        couponEmbed(lovableOffer.id),
+        h2("The rest of the field, ranked"),
+        bullets([
+          "Bolt.new — the pick for people who want to keep one hand on the code. Prompt to full-stack app in a live in-browser sandbox you can edit. Token-metered, and it rewards technical comfort.",
+          "v0 — not really an app builder but the best UI generator there is. Reach for it when you need a beautiful front end fast and can supply the rest of the stack.",
+          "Replit — a full cloud IDE plus an AI Agent that builds and hosts. Great for learners and fast prototypes; more editor than builder.",
+          "Base44 — the fastest path to a hosted app with the least setup, operated by Wix. Managed rather than exportable, so choose it by your exit plan. Still an honest, accurate pick, just no longer our featured one.",
+          "Firebase Studio — Google's cloud workspace for building full-stack and AI apps, strongest if you already live in the Google and Firebase ecosystem.",
+        ]),
+        promoSlot(),
+        h2("How to choose in one question"),
+        pt("Do you want the tool to hand you a working product, or hand you code to keep working on? If it is the product, Lovable leads and Base44 is close on speed. If it is the code, Bolt and v0 put you closer to it. Almost everyone reading this wants the product, which is why the ranking looks the way it does."),
+        quote("The best AI app builder is the one that gets your specific idea deployed without fighting the way you work. For most people shipping a product, that is Lovable."),
+        h2("A note for developers"),
+        pt("If you actually write software, an app builder may be the wrong category entirely — you likely want an AI IDE like Cursor instead. We wrote a separate piece on that decision, and a full comparison of Lovable versus Cursor that frames it honestly for both audiences."),
+      ),
+    },
+    {
+      title: "The best AI IDEs and coding agents in 2026",
+      slug: "best-ai-ides-coding-agents-2026",
+      excerpt:
+        "For people who write code, the AI is moving into the editor. Cursor leads our ranking, with Devin Desktop (formerly Windsurf), Google Antigravity, GitHub Copilot, and the fast-moving newcomers each placed honestly.",
+      categoryId: catBySlug.get("ai-ides-coding-agents")!.id,
+      tags: ["ai-ides", "cursor", "roundup"],
+      readingMinutes: 8,
+      publishedAt: days(-2),
+      relatedStores: ["cursor", "windsurf", "google-antigravity", "github-copilot", "kiro", "trae", "zed", "devin"],
+      content: doc(
+        pt("If you write software for a living, the interesting AI is not the one that builds an app from a prompt — it is the one that lives in your editor and makes you faster inside a real codebase. This category is moving quickly, and one entry even changed its name mid-year. Here is how the AI IDEs and coding agents rank in 2026."),
+        h2("Our top pick: Cursor"),
+        pt("Cursor leads because it got the fundamentals right and kept them ahead. It is a VS Code fork, so your extensions and muscle memory carry over on day one; its tab completion predicts the next edit rather than the next token, and it is the feature people miss most when they leave; and its agent mode makes multi-file changes that respect your project's context. It has the largest community and the steadiest release cadence, which makes it the safe long-term bet as well as the strong one."),
+        pt("The catch: it assumes you can code, and its heaviest models run on usage-based billing that can climb on a busy day. Our full Cursor review covers where that bites."),
+        h2("The rest of the field"),
+        bullets([
+          "Devin Desktop (formerly Windsurf) — the closest competitor to Cursor. Note the rename: Windsurf is now Devin Desktop under Cognition, and windsurf.com redirects there. Same editor, known for its Cascade agent; pick it if that flow suits you.",
+          "GitHub Copilot — the incumbent that meets you inside the IDE and GitHub workflow you already use. The least disruptive choice, and often already paid for; less unified than a dedicated AI editor.",
+          "Google Antigravity — the most interesting rethink: agent-first rather than editor-first, built on Gemini. Newer and less proven, but the one to watch.",
+          "Kiro — AWS's spec-driven agentic IDE, for teams that want structure around AI-generated code.",
+          "Trae — ByteDance's fast-moving AI IDE, notable for generous model access.",
+          "Zed — a blazing-fast, Rust-built editor with AI baked in, for developers who find heavier editors sluggish.",
+        ]),
+        promoSlot(),
+        h2("How to choose"),
+        pt("If you want the proven default, Cursor. If you won't switch editors, Copilot meets you where you are. If you believe agents are the future unit of work, Antigravity is the early bet. We have head-to-heads for the ones people weigh most: Cursor versus Copilot, Cursor versus Devin Desktop, and Cursor versus Antigravity."),
+        quote("The best AI IDE is the one whose agent flow feels like help rather than homework. For most developers today, that is Cursor."),
+        h2("Not a developer?"),
+        pt("If you can't code and you're here to ship a product, none of these are your starting point — you want an AI app builder like Lovable, which goes from a prompt to a deployed app. We wrote a separate guide on which category you actually need."),
+      ),
+    },
+    {
+      title: "AI app builder or AI IDE: which do you actually need?",
+      slug: "app-builder-or-ai-ide-which-to-use",
+      excerpt:
+        "The most common expensive mistake in AI tooling is picking the wrong category. Here is the one honest question that sorts it, and where to go once you have your answer.",
+      categoryId: catBySlug.get("ai-tools")!.id,
+      tags: ["decision", "lovable", "cursor"],
+      readingMinutes: 6,
+      publishedAt: days(-3),
+      relatedStores: ["lovable", "cursor"],
+      content: doc(
+        pt("People lose weeks and real money by choosing between an AI app builder and an AI IDE without realising they are different categories solving different problems. The tools look similar in a demo — both take a prompt and produce software — and then one of them can't do the thing you actually needed. This is the piece that sorts it out."),
+        h2("The one question"),
+        pt("Do you write code? Not \"could you learn\" — do you, today, read and steer code comfortably? That single answer decides almost everything, because the two categories are built for opposite sides of it."),
+        h2("If you don't code: an AI app builder"),
+        pt("An app builder like Lovable takes your description and produces a working, deployed application — front end, backend, auth, hosting — without asking you to open a repository. For a founder or operator who wants a product live, this is the right tool, and the fact that it also leaves you standard code means you are not trapped when you grow. This is where most of the people reading Promopedia should start; our Lovable review and the app-builder roundup go deeper."),
+        couponEmbed(lovableOffer.id),
+        h2("If you do code: an AI IDE"),
+        pt("If you already write software, an app builder will feel like a cage. You want an AI IDE like Cursor: it sits inside a real codebase and makes you dramatically faster at the work you already do, with full control over every line. Handing a professional developer an app builder is like handing a chef a meal kit — it works, but it fights their skill. Our Cursor review and the AI IDE roundup cover the options."),
+        h2("The honest edge case"),
+        pt("Some people sit in the middle: semi-technical builders who can read code but don't want to write all of it. Tools like Bolt.new are built for exactly that gap, giving you prompt-to-app speed with an editable code sandbox. If that's you, start there and lean whichever way you find yourself pulling."),
+        quote("Pick the category before you pick the tool. The category is decided by whether you write code, not by which demo looked cooler."),
+        h2("The decision, made"),
+        pt("Shipping a product without a dev background: Lovable. Writing software professionally: Cursor. In between and comfortable with code: Bolt. If you're still unsure, our Lovable versus Cursor comparison lays the two worlds side by side and tells each reader, plainly, which one wins for them."),
+      ),
+    },
+    {
+      title: "Lovable pricing and credits, explained",
+      slug: "lovable-pricing-and-credits-explained",
+      excerpt:
+        "Lovable runs on credits, not a flat seat price, which trips people up. Here is how the model works and every legitimate way to pay less, from the free tier to the student discount.",
+      categoryId: catBySlug.get("no-code-app-builders")!.id,
+      tags: ["lovable", "pricing", "guide"],
+      readingMinutes: 6,
+      publishedAt: days(-4),
+      relatedStores: ["lovable"],
+      content: doc(
+        pt("Lovable does not charge a simple per-seat price. It runs on a credit model, and if you don't understand it going in, the bill can surprise you and the free tier can feel smaller than it is. Here is how it actually works, verified against the official pricing page in July 2026, and every honest way to spend less."),
+        h2("How the credits work"),
+        pt("The free plan gives you a daily grant of build credits — five a day, up to thirty a month — plus a monthly grant of Cloud credits for hosting and backend features. Building consumes credits by the complexity of the change: a small tweak costs a fraction of a credit, a bigger \"build me this whole page\" costs more, and there is a plan mode that charges a flat one credit per message. Paid tiers add a monthly credit balance on top of those daily grants. The official pricing page is the source of truth for the current numbers, since they adjust."),
+        h2("Way one: live on the free tier first"),
+        pt("The free plan is not a teaser — those daily build credits are enough to prototype a real idea and decide whether Lovable fits before you pay anything. Spend that allowance validating the concept, not polishing pixels, so the credits go toward answering the question that matters."),
+        couponEmbed(lovableOffer.id),
+        h2("Way two: the student discount"),
+        pt("If you have a valid student email, Lovable offers a student discount — verify eligibility on the official students page. For anyone building while studying, this is the single cheapest way onto a paid plan."),
+        promoSlot(),
+        h2("Way three: time your credits"),
+        pt("Because credits reset on a cycle rather than rolling over indefinitely, the practical trick is to concentrate your building into the part of the cycle you've paid for, instead of letting a fresh grant expire unused. Plan the work, then spend the credits in a focused burst."),
+        h2("What not to do"),
+        pt("Don't burn credits iterating on tiny cosmetic changes you could make once at the end, and don't upgrade tiers before the free plan has actually shown you a wall. The credit model rewards deliberate building; it punishes aimless prompting."),
+        quote("Lovable's credits reward people who know what they want to build. Decide the shape of the thing, then spend."),
+        h2("The bottom line"),
+        pt("Start free, validate the idea, take the student rate if you qualify, and upgrade only when the credits genuinely run short. Our full Lovable review covers whether it's the right builder for you in the first place."),
+      ),
+    },
+    {
+      title: "From prompt to launched product: shipping your first app with Lovable",
+      slug: "shipping-your-first-app-with-lovable",
+      excerpt:
+        "A calm, honest walkthrough of taking an idea to a live app with Lovable, including the exact points where first-timers get stuck and how to get past them.",
+      categoryId: catBySlug.get("no-code-app-builders")!.id,
+      tags: ["lovable", "workflow", "guide"],
+      readingMinutes: 7,
+      publishedAt: days(-5),
+      relatedStores: ["lovable"],
+      content: doc(
+        pt("Building your first real app with Lovable is less about clever prompting and more about working in the right order. People who get stuck usually didn't hit a limit of the tool; they skipped a step. Here is the path from idea to a launched product, with the honest snags called out where they happen."),
+        h2("1. Describe the app, not the screen"),
+        pt("Start by telling Lovable what the app is for and who uses it, not what one page should look like. \"A booking tool where customers pick a slot and pay a deposit\" gives it the shape to build against; \"a page with a calendar\" gets you a calendar and little else. The clearer the job, the better the first version."),
+        h2("2. Get the core loop working before the polish"),
+        pt("Resist decorating early. Get the one thing the app must do — the booking, the signup, the checkout — working end to end first. This is also where credits are best spent: on the loop that proves the idea, not on colours you'll change anyway."),
+        couponEmbed(lovableOffer.id),
+        h2("3. Wire up the backend and accounts"),
+        pt("This is where first-timers most often stall. Lovable builds on a Supabase backend, so when you add logins or save real data, you're touching a real database. You don't have to master it, but expect a moment where the app stops being a mockup and becomes a system with users and records. Take it slowly and test with a real account."),
+        promoSlot(),
+        h2("4. Connect a domain and launch"),
+        pt("Publishing is the easy part — Lovable deploys for you, and pointing a custom domain is a short step on a paid plan. The honest advice: launch earlier than feels comfortable, with the core loop working and the polish unfinished. A live app with real users teaches you more in a day than another week of prompting."),
+        h2("Where beginners actually get stuck"),
+        bullets([
+          "Asking for everything at once instead of building the core loop first.",
+          "Treating the Supabase backend as magic — the moment real data and logins appear, slow down.",
+          "Burning credits on cosmetic iteration before the app does its one job.",
+          "Waiting for perfect before launching, when real users are the fastest teacher.",
+        ]),
+        quote("Your first app doesn't need to be impressive. It needs to do one thing, with real users, on a real domain."),
+        h2("Then keep going"),
+        pt("Once the first app is live, the second is far faster, because you understand the rhythm: describe, build the loop, wire the backend, launch. If you're weighing whether Lovable is the right tool at all, our full review and the app-builder roundup will settle it."),
+      ),
+    },
     {
       title: "Notion vs ClickUp: how to choose without regretting it",
       slug: "notion-vs-clickup-how-to-choose",
@@ -2088,8 +2807,8 @@ async function main() {
   await db.insert(settings).values({
     id: "singleton",
     editorPicks: [
-      { slug: "lovable", label: "Best overall" },
-      { slug: "base44", label: "Best for beginners" },
+      { slug: "lovable", label: "Best overall AI app builder" },
+      { slug: "cursor", label: "Best AI IDE" },
       { slug: "notion", label: "Best value" },
     ],
   });

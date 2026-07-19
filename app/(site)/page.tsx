@@ -112,14 +112,20 @@ export default async function HomePage() {
     criteria: c.criteria.map((r) => ({ label: r.label, winner: r.winner })),
   }));
 
-  // Floating hero chips: full pools; the Hero shuffles + slices in the browser.
-  const heroCards = reviewedStores
-    .filter((s) => s.editorialScore !== null)
-    .map((s) => ({
-      name: s.name,
-      score: s.editorialScore as number,
-      logoUrl: s.logoUrl,
-    }));
+  // Floating hero chips: the Hero pins the first entry (our flagship) and
+  // shuffles the rest. Lovable's card and the featured Lovable-vs-Cursor VS
+  // chip go first so the flagship is always visible; everything else rotates.
+  const scored = reviewedStores.filter((s) => s.editorialScore !== null);
+  const heroCards = [
+    ...scored.filter((s) => s.slug === "lovable"),
+    ...scored.filter((s) => s.slug !== "lovable"),
+  ].map((s) => ({
+    name: s.name,
+    score: s.editorialScore as number,
+    logoUrl: s.logoUrl,
+  }));
+  // comparisons[0] is the featured matchup (DB orders isFeatured first), so the
+  // VS chips already lead with Lovable vs Cursor.
   const heroVsChips = comparisons.map((c) => ({
     a: c.storeA.name,
     b: c.storeB.name,
@@ -182,7 +188,7 @@ export default async function HomePage() {
       )}
 
       {/* ==================================== Featured comparison (pine band) */}
-      <FeaturedComparison matchups={matchups} />
+      <FeaturedComparison matchup={matchups[0] ?? null} />
 
       {/* ------------------------------------------- Browse by category (rows) */}
       <Section>

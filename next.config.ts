@@ -3,6 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  // The Supabase (Tokyo, nano) DB can be slow under the build's burst of
+  // parallel queries; give static generation room so pages don't hit the 60s
+  // default and fail. Per-page, so it's safe well under Vercel's build limit.
+  staticPageGenerationTimeout: 300,
   async redirects() {
     // v2 route renames — old URLs must never 404. Explicit 301 (GET-safe
     // permanent) rather than Next's default 308.
